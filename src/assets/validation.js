@@ -11,21 +11,18 @@ export function validateDataCompany(data,type) {
     if (type!="Doctor")
    {
     if (!data.companyName || data.companyName.length < 5) {
+      console.log(data.companyName)
       errors.companyName =messages.companyName;
     }
    }
    else
    {
-    if (!data.cin || !isValidCin(cin))
+    if (!data.cin || !isValidCin(data.cin))
       {
         errors.cin=messages.cin;
       }
    }
-   
   
-    if (!data.address || data.address.length < 5) {
-      errors.address = messages.address;
-    }
   
     if (!data.email || !isValidEmail(data.email)) {
       errors.email = messages.email;
@@ -39,11 +36,9 @@ export function validateDataCompany(data,type) {
       errors.confirmPassword = messages.confirmPassword;
     }
   
-    if (!data.bio || data.bio.length < 20) {
-      errors.bio = messages.bio;
-    }
+   
   
-    return Object.keys(errors).length === 0 ? null : errors;
+    return Object.keys(errors).length === 0 ? {} : errors;
   }
   
   
