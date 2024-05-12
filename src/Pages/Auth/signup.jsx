@@ -27,13 +27,6 @@ export default function Signup() {
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({});
 
-  // const handleChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value,
-  //   });
-  // };
-
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
 
@@ -107,6 +100,7 @@ export default function Signup() {
   };
 
   const FormCompanyDoctor = () => {
+    ////mochkla :contenu ta3 el input yetfasa5
     const [auxFormData, setAuxFormData] = useState({});
 
     const handleChange = (e) => {
@@ -115,7 +109,6 @@ export default function Signup() {
         [e.target.name]: e.target.value,
       });
     };
-
     const handleSubmitForm1 = () => {
       const validation = validateForm1(auxFormData, accountType);
       setErrors(validation);
@@ -175,8 +168,7 @@ export default function Signup() {
                     id="cin"
                     name="cin"
                     placeholder="12345678"
-                    required
-                    value="12345678"
+                    value={auxFormData.cin}
                     onChange={handleChange}
                   />
                   {errors.cin && (
@@ -265,6 +257,7 @@ export default function Signup() {
       </>
     );
   };
+
   const OtpForm = () => {
     const handleOtpChange = (value) => {
       setOtp(value);
@@ -341,7 +334,34 @@ export default function Signup() {
       </>
     );
   };
-  const CompleteProfileForm = () => {
+
+  const CompleteProfileFormDoctor = () => {
+    const [auxFormData, setAuxFormData] = useState({});
+    const handleChange = (e) => {
+      setAuxFormData({
+        ...auxFormData,
+        [e.target.name]: e.target.value,
+      });
+    };
+
+    const handleGenderChange = (e) => {
+      setAuxFormData({
+        ...auxFormData,
+        gender: e,
+      });
+    };
+
+    const handleSubmitForm2 = () => {
+      console.log(auxFormData);
+      const validation = validateForm1(auxFormData, accountType);
+      setErrors(validation);
+
+      if (Object.keys(validation).length === 0) {
+        setFormData({ ...auxFormData });
+        handleNext();
+      }
+    };
+
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -359,13 +379,35 @@ export default function Signup() {
             <div className="grid grid-cols-2 gap-4 text-left">
               <div className="space-y-2">
                 <Label htmlFor="first-name">First Name</Label>
-                <Input id="first-name" placeholder="John" required />
+                <Input
+                  id="first-name"
+                  name="firstName"
+                  placeholder="John"
+                  onChange={handleChange}
+                />
+                {errors.firstName && (
+                  <span className="text-red-500 flex justify-start text-sm ">
+                    {errors.firstName}
+                  </span>
+                )}
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="last-name">Last Name</Label>
-                <Input id="last-name" placeholder="Doe" required />
+                <Input
+                  id="last-name"
+                  name="lastName"
+                  placeholder="Doe"
+                  onChange={handleChange}
+                />
+                {errors.lastName && (
+                  <span className="text-red-500 flex justify-start text-sm ">
+                    {errors.lastName}
+                  </span>
+                )}
               </div>
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="address" className="flex justify-start">
                 Address*
@@ -374,8 +416,7 @@ export default function Signup() {
                 id="address"
                 name="address"
                 placeholder="123 Main St, Anytown USA"
-                required
-                // onChange={handleChange}
+                onChange={handleChange}
               />
 
               {errors.address && (
@@ -384,22 +425,32 @@ export default function Signup() {
                 </span>
               )}
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="gender*" className="flex justify-start">
+              <Label htmlFor="gender" className="flex justify-start">
                 Gender*
               </Label>
-              <Select id="gender">
+              <Select
+                id="gender"
+                name="gender"
+                onValueChange={handleGenderChange}
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a Gender" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Gender</SelectLabel>
-                    <SelectItem value="apple">Male</SelectItem>
-                    <SelectItem value="banana">Female</SelectItem>
+                    <SelectItem value="Male">Male</SelectItem>
+                    <SelectItem value="Female">Female</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {errors.gender && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.gender}
+                </span>
+              )}
             </div>
           </div>
 
@@ -409,17 +460,51 @@ export default function Signup() {
           <div className="grid gap-4  text-left">
             <div className="space-y-2">
               <Label htmlFor="specialty">Speciality*</Label>
-              <Input id="specialty" placeholder="Internal Medicine" required />
+              <Input
+                id="specialty"
+                name="speciality"
+                placeholder="Internal Medicine"
+                onChange={handleChange}
+              />
+              {errors.speciality && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.speciality}
+                </span>
+              )}
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="experience">Experience</Label>
-              <Input id="experience" placeholder="10" required type="number" />
+              <Input
+                id="experience"
+                name="experience"
+                placeholder="10"
+                type="number"
+                onChange={handleChange}
+              />
+              {errors.experience && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.experience}
+                </span>
+              )}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="price">Price</Label>
-              <Input id="price" placeholder="100" required type="number" />
+              <Input
+                id="price"
+                name="price"
+                placeholder="100"
+                type="number"
+                onChange={handleChange}
+              />
+              {errors.price && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.price}
+                </span>
+              )}
             </div>
+
             <div className="space-y-2">
               <Label htmlFor="bio">Bio</Label>
               <Textarea
@@ -430,8 +515,7 @@ export default function Signup() {
                     ? "Tell us about yourself"
                     : "Tell us about your company"
                 }
-                required
-                // onChange={handleChange}
+                onChange={handleChange}
               />
               {errors.bio && (
                 <span className="text-red-500 flex justify-start text-sm">
@@ -442,7 +526,7 @@ export default function Signup() {
           </div>
           <Button
             className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
-            onClick={handleNext}
+            onClick={handleSubmitForm2}
           >
             Finish
           </Button>
@@ -451,7 +535,69 @@ export default function Signup() {
     );
   };
 
-  const ReviewAccount = () => {
+  const CompleteProfileFormCompany = () => {
+    const [auxFormData, setAuxFormData] = useState({});
+    const handleChange = (e) => {
+      setAuxFormData({
+        ...auxFormData,
+        [e.target.name]: e.target.value,
+      });
+    };
+    const handleSubmitForm3 = () => {
+      console.log(auxFormData);
+      // const validation = validateForm1(auxFormData, accountType);
+      // setErrors(validation);
+
+      // if (Object.keys(validation).length === 0) {
+      //   setFormData({ ...auxFormData });
+      //   handleNext();
+      // }
+    };
+    return (
+      <>
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          Complete Your {accountType} Profile
+        </h1>
+        <div>
+          <p className="mt-2 text-gray-500 ">
+            Enhance Your {accountType}'s Presence with Detailed Informations
+          </p>
+          <p className="text-lg text-left font-medium py-2 sm:text-md">
+            {accountType} Informations
+          </p>
+          <div className="grid gap-4 text-left">
+            <div className="space-y-2">
+              <Label htmlFor="address">Address</Label>
+              <Input
+                id="address"
+                name="address"
+                placeholder="123 Main St, Anytown USA"
+                onChange={handleChange}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Tell us about your company"
+                name="description"
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+          <Button
+            className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
+            onClick={handleSubmitForm3}
+          >
+            Finish
+          </Button>
+        </div>
+      </>
+    );
+  };
+
+  const ReviewAccountDoctor = () => {
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -536,6 +682,7 @@ export default function Signup() {
       </>
     );
   };
+
   return (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
@@ -574,13 +721,22 @@ export default function Signup() {
               <OtpForm />
             </motion.div>
           )}
-          {currentForm === 4 && (
+          {currentForm === 4 && accountType === "Doctor" && (
             <motion.div
-              key="completeProfile"
+              key="completeProfileDoctor"
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
             >
-              <CompleteProfileForm />
+              <CompleteProfileFormDoctor />
+            </motion.div>
+          )}
+          {currentForm === 4 && accountType !== "Doctor" && (
+            <motion.div
+              key="completeProfileDoctor"
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+            >
+              <CompleteProfileFormCompany />
             </motion.div>
           )}
           {currentForm === 5 && (
