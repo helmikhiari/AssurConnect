@@ -1,4 +1,4 @@
-export function validateDataCompany(data,type) {
+export function validateForm1(data,type) {
     const errors = {};
     const messages = {
         companyName: "Please provide a valid "+type+" name",
