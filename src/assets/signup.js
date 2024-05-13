@@ -115,27 +115,27 @@ export function validateForm1(data,type) {
       {
         errors.firstName=messages.firstName
       }
-    else if (!isValid(data.lastName,2))
+     if (!isValid(data.lastName,2))
       {
         errors.lastName=messages.lastName
       }
-    else if (!isValid(data.address,6))
+     if (!isValid(data.address,6))
       {
         errors.address=messages.address
       }
-    else if (!data.gender)
+     if (!data.gender)
       {
         errors.gender=messages.gender;
       }
-    else if (!isValid(data.speciality,4))
+     if (!isValid(data.speciality,4))
       {
         errors.speciality=messages.speciality
       }
-    else if (!data.experience || isNaN(data.experience) || parseInt(data.experience) < 0)
+     if (!data.experience || isNaN(data.experience) || parseInt(data.experience) < 0)
       {
         errors.experience=messages.experience
       }
-    else if (!data.price || isNaN(data.price) || parseFloat(data.price) < 0)
+     if (!data.price || isNaN(data.price) || parseFloat(data.price) < 0)
       {
         errors.price=messages.price;
       }
@@ -154,7 +154,7 @@ export function validateForm1(data,type) {
       {
         errors.address=messages.address
       }
-    else if (!isValid(data.description,20))
+     if (!isValid(data.description,20))
     {
       errors.description=messages.description
     }

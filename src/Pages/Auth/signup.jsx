@@ -15,21 +15,20 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
-import { validateForm1 } from "./../../assets/signup";
+import { validateForm1, validateFormCompany, validateFormDoctor } from "./../../assets/signup";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+
 export default function Signup() {
   const [accountType, setAccountType] = useState(null);
   const [currentForm, setCurrentForm] = useState(1);
-  const [errors, setErrors] = useState({});
-  const [formData, setFormData] = useState({});
-
+  // const [formData, setFormData] = useState({});
+  const formData=useRef({})
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
-
   const InitialForm = () => {
     const handleAccountTypeChange = (type) => setAccountType(type);
     return (
@@ -100,25 +99,31 @@ export default function Signup() {
   };
 
   const FormCompanyDoctor = () => {
-    ////mochkla :contenu ta3 el input yetfasa5
-    const [auxFormData, setAuxFormData] = useState({});
-
+    // const [auxFormData, setauxFormData] = useState({});
+    const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-      setAuxFormData({
-        ...auxFormData,
-        [e.target.name]: e.target.value,
-      });
+    
+      // setauxFormData((prev)=>({
+      //   ...prev,
+      //   [e.target.name]: e.target.value,
+      // }));
+      formData.current[e.target.name]=e.target.value;
+      console.log(formData.current[e.target.name])
     };
+    
     const handleSubmitForm1 = () => {
-      const validation = validateForm1(auxFormData, accountType);
+      // const validation = validateForm1(auxFormData, accountType);
+      const validation=validateForm1(formData.current,accountType);
       setErrors(validation);
-
+      
       if (Object.keys(validation).length === 0) {
-        setFormData({ ...auxFormData });
+        // setFormData({...auxFormData})
+        
         handleNext();
+        
       }
     };
-
+  
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -137,7 +142,7 @@ export default function Signup() {
               {accountType} Informations
             </div>
           </div>
-
+            
           <div>
             <div className="grid gap-4">
               {!(accountType === "Doctor") ? (
@@ -149,8 +154,7 @@ export default function Signup() {
                     id="company-name"
                     name="companyName"
                     placeholder="DunDill"
-                    required
-                    value="dundill"
+                    value={formData.current.companyName}
                     onChange={handleChange}
                   />
                   {errors.companyName && (
@@ -165,11 +169,11 @@ export default function Signup() {
                     CIN*
                   </Label>
                   <Input
-                    id="cin"
                     name="cin"
+                    id="cin"
                     placeholder="12345678"
-                    value={auxFormData.cin}
-                    onChange={handleChange}
+                    defaultValue={formData.current.cin}
+                    onChange={handleChange}                
                   />
                   {errors.cin && (
                     <span className="text-red-500 flex justify-start text-sm ">
@@ -190,7 +194,7 @@ export default function Signup() {
                   required
                   type="email"
                   onChange={handleChange}
-                  value="hellmi.khiari@gmail.com"
+                  value={formData.current.email}              
                 />
                 {errors.email && (
                   <span className="text-red-500 text-sm flex justify-start">
@@ -209,7 +213,7 @@ export default function Signup() {
                   required
                   type="password"
                   onChange={handleChange}
-                  value="1598521Az?"
+                  value={formData.current.password}
                 />
                 {errors.password && (
                   <span className="text-red-500 flex justify-start text-sm">
@@ -228,7 +232,8 @@ export default function Signup() {
                   required
                   type="password"
                   onChange={handleChange}
-                  value="1598521Az?"
+                  value={formData.current.confirmPassword}
+                  
                 />
                 {errors.confirmPassword && (
                   <span className="text-red-500 flex justify-start text-sm">
@@ -336,32 +341,41 @@ export default function Signup() {
   };
 
   const CompleteProfileFormDoctor = () => {
-    const [auxFormData, setAuxFormData] = useState({});
+   
+    // const [auxFormData, setauxFormData] = useState({});
+    const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-      setAuxFormData({
-        ...auxFormData,
-        [e.target.name]: e.target.value,
-      });
+    // if (!e.target.value)
+    //   {
+    //     setFormData({...formData,[e.target.name]:""})
+    //   }
+    //   setauxFormData((prev)=>({
+    //     ...prev,
+    //     [e.target.name]: e.target.value,
+    //   }));
+    
+    formData.current[e.target.name]=e.target.value;
+    console.log(formData.current[e.target.name])
     };
-
-    const handleGenderChange = (e) => {
-      setAuxFormData({
-        ...auxFormData,
-        gender: e,
-      });
-    };
-
-    const handleSubmitForm2 = () => {
-      console.log(auxFormData);
-      const validation = validateForm1(auxFormData, accountType);
+    
+    // const form=formData.firstName? formData:auxFormData
+    const handleSubmitFormDcotor = () => {
+      // const validation = validateFormDoctor(form, accountType);
+      const validation=validateFormDoctor(formData.current,accountType)
       setErrors(validation);
-
       if (Object.keys(validation).length === 0) {
-        setFormData({ ...auxFormData });
+        // setFormData((prev)=>({...prev,...form}))
         handleNext();
       }
     };
-
+    
+    const handleGenderChange = (e) => {
+      // setauxFormData({
+      //   ...form,
+      //   gender: e,
+      // });
+      formData.current["gender"]=e;
+    };
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -384,6 +398,7 @@ export default function Signup() {
                   name="firstName"
                   placeholder="John"
                   onChange={handleChange}
+                  defaultValue={formData.current.firstName}
                 />
                 {errors.firstName && (
                   <span className="text-red-500 flex justify-start text-sm ">
@@ -399,6 +414,7 @@ export default function Signup() {
                   name="lastName"
                   placeholder="Doe"
                   onChange={handleChange}
+                  defaultValue={formData.current.lastName}
                 />
                 {errors.lastName && (
                   <span className="text-red-500 flex justify-start text-sm ">
@@ -417,6 +433,7 @@ export default function Signup() {
                 name="address"
                 placeholder="123 Main St, Anytown USA"
                 onChange={handleChange}
+                defaultValue={formData.current.address}
               />
 
               {errors.address && (
@@ -434,6 +451,7 @@ export default function Signup() {
                 id="gender"
                 name="gender"
                 onValueChange={handleGenderChange}
+                
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a Gender" />
@@ -465,6 +483,7 @@ export default function Signup() {
                 name="speciality"
                 placeholder="Internal Medicine"
                 onChange={handleChange}
+                defaultValue={formData.current.speciality}
               />
               {errors.speciality && (
                 <span className="text-red-500 flex justify-start text-sm ">
@@ -481,6 +500,7 @@ export default function Signup() {
                 placeholder="10"
                 type="number"
                 onChange={handleChange}
+                defaultValue={formData.current.experience}
               />
               {errors.experience && (
                 <span className="text-red-500 flex justify-start text-sm ">
@@ -497,6 +517,7 @@ export default function Signup() {
                 placeholder="100"
                 type="number"
                 onChange={handleChange}
+                defaultValue={formData.current.price}
               />
               {errors.price && (
                 <span className="text-red-500 flex justify-start text-sm ">
@@ -510,12 +531,9 @@ export default function Signup() {
               <Textarea
                 name="bio"
                 id="bio"
-                placeholder={
-                  accountType === "Doctor"
-                    ? "Tell us about yourself"
-                    : "Tell us about your company"
-                }
+                placeholder="Tell us about yourself"
                 onChange={handleChange}
+                defaultValue={formData.current.bio}
               />
               {errors.bio && (
                 <span className="text-red-500 flex justify-start text-sm">
@@ -526,7 +544,7 @@ export default function Signup() {
           </div>
           <Button
             className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
-            onClick={handleSubmitForm2}
+            onClick={handleSubmitFormDcotor}
           >
             Finish
           </Button>
@@ -536,23 +554,25 @@ export default function Signup() {
   };
 
   const CompleteProfileFormCompany = () => {
-    const [auxFormData, setAuxFormData] = useState({});
+    const [auxFormData, setauxFormData] = useState({});
+    const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-      setAuxFormData({
-        ...auxFormData,
+      setauxFormData((prev)=>({
+        ...prev,
         [e.target.name]: e.target.value,
-      });
+      }));
+      
     };
-    const handleSubmitForm3 = () => {
-      console.log(auxFormData);
-      // const validation = validateForm1(auxFormData, accountType);
-      // setErrors(validation);
-
-      // if (Object.keys(validation).length === 0) {
-      //   setFormData({ ...auxFormData });
-      //   handleNext();
-      // }
+    const form=formData.firstName? formData:auxFormData
+    const handleSubmitFormCompany = () => {
+      const validation = validateFormCompany(form, accountType);
+      setErrors(validation);
+      if (Object.keys(validation).length === 0) {
+        setFormData((prev)=>({...prev,...form}))
+        handleNext();
+      }
     };
+    
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -573,6 +593,7 @@ export default function Signup() {
                 name="address"
                 placeholder="123 Main St, Anytown USA"
                 onChange={handleChange}
+                value={formData.current.address}
               />
             </div>
 
@@ -583,12 +604,13 @@ export default function Signup() {
                 placeholder="Tell us about your company"
                 name="description"
                 onChange={handleChange}
+                value={formData.current.description}
               />
             </div>
           </div>
           <Button
             className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
-            onClick={handleSubmitForm3}
+            onClick={handleSubmitFormCompany}
           >
             Finish
           </Button>
@@ -598,6 +620,7 @@ export default function Signup() {
   };
 
   const ReviewAccountDoctor = () => {
+   console.log(formData)
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -613,55 +636,55 @@ export default function Signup() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">CIN:</span>
-                  <p>123456789</p>
+                  <p>{formData.current.cin}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Email:</span>
-                  <p>john@example.com</p>
+                  <p>{formData.current.email}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">Last Name:</span>
-                  <p>Doe</p>
+                  <p>{formData.current.lastName}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">First Name:</span>
-                  <p>John</p>
+                  <p>{formData.current.firstName}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">Address:</span>
-                  <p>123 Main St, Anytown USA</p>
+                  <p>{formData.current.address}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Gender:</span>
-                  <p>Male</p>
+                  <p>{formData.current.gender}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">Specialty:</span>
-                  <p>Internal Medicine</p>
+                  <p>{formData.current.speciality}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Experience:</span>
-                  <p>10 years</p>
+                  <p>{formData.current.experience}</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <span className="text-gray-500">Bio:</span>
-                  <p>I have 10 years of experience in the medical field.</p>
+                  <p>{formData.current.bio}</p>
                 </div>
                 <div>
                   <span className="text-gray-500">Price:</span>
-                  <p>$100</p>
+                  <p>{formData.current.price}</p>
                 </div>
               </div>
             </div>
@@ -674,7 +697,7 @@ export default function Signup() {
             >
               Back
             </Button>
-            <Button className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]">
+            <Button className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]" >
               Create Account
             </Button>
           </div>
@@ -682,6 +705,8 @@ export default function Signup() {
       </>
     );
   };
+
+
 
   return (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
@@ -732,7 +757,7 @@ export default function Signup() {
           )}
           {currentForm === 4 && accountType !== "Doctor" && (
             <motion.div
-              key="completeProfileDoctor"
+              key="completeProfileCompany"
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
             >
@@ -745,7 +770,7 @@ export default function Signup() {
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
             >
-              <ReviewAccount />
+              <ReviewAccountDoctor />
             </motion.div>
           )}
         </AnimatePresence>
