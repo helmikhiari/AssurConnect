@@ -15,7 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion, AnimatePresence } from "framer-motion";
-import { validateForm1, validateFormCompany, validateFormDoctor } from "./../../assets/signup";
+import {
+  validateForm1,
+  validateFormCompany,
+  validateFormDoctor,
+} from "./../../assets/signup";
 import {
   InputOTP,
   InputOTPGroup,
@@ -25,8 +29,8 @@ import {
 export default function Signup() {
   const [accountType, setAccountType] = useState(null);
   const [currentForm, setCurrentForm] = useState(1);
-  // const [formData, setFormData] = useState({});
-  const formData=useRef({})
+
+  const formData = useRef({});
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
   const InitialForm = () => {
@@ -99,31 +103,19 @@ export default function Signup() {
   };
 
   const FormCompanyDoctor = () => {
-    // const [auxFormData, setauxFormData] = useState({});
     const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-    
-      // setauxFormData((prev)=>({
-      //   ...prev,
-      //   [e.target.name]: e.target.value,
-      // }));
-      formData.current[e.target.name]=e.target.value;
-      console.log(formData.current[e.target.name])
+      formData.current[e.target.name] = e.target.value;
     };
-    
+
     const handleSubmitForm1 = () => {
-      // const validation = validateForm1(auxFormData, accountType);
-      const validation=validateForm1(formData.current,accountType);
+      const validation = validateForm1(formData.current, accountType);
       setErrors(validation);
-      
       if (Object.keys(validation).length === 0) {
-        // setFormData({...auxFormData})
-        
         handleNext();
-        
       }
     };
-  
+
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -142,7 +134,7 @@ export default function Signup() {
               {accountType} Informations
             </div>
           </div>
-            
+
           <div>
             <div className="grid gap-4">
               {!(accountType === "Doctor") ? (
@@ -154,7 +146,7 @@ export default function Signup() {
                     id="company-name"
                     name="companyName"
                     placeholder="DunDill"
-                    value={formData.current.companyName}
+                    defaultValue={formData.current.companyName}
                     onChange={handleChange}
                   />
                   {errors.companyName && (
@@ -173,7 +165,7 @@ export default function Signup() {
                     id="cin"
                     placeholder="12345678"
                     defaultValue={formData.current.cin}
-                    onChange={handleChange}                
+                    onChange={handleChange}
                   />
                   {errors.cin && (
                     <span className="text-red-500 flex justify-start text-sm ">
@@ -194,7 +186,7 @@ export default function Signup() {
                   required
                   type="email"
                   onChange={handleChange}
-                  value={formData.current.email}              
+                  defaultValue={formData.current.email}
                 />
                 {errors.email && (
                   <span className="text-red-500 text-sm flex justify-start">
@@ -213,7 +205,7 @@ export default function Signup() {
                   required
                   type="password"
                   onChange={handleChange}
-                  value={formData.current.password}
+                  defaultValue={formData.current.password}
                 />
                 {errors.password && (
                   <span className="text-red-500 flex justify-start text-sm">
@@ -232,8 +224,7 @@ export default function Signup() {
                   required
                   type="password"
                   onChange={handleChange}
-                  value={formData.current.confirmPassword}
-                  
+                  defaultValue={formData.current.confirmPassword}
                 />
                 {errors.confirmPassword && (
                   <span className="text-red-500 flex justify-start text-sm">
@@ -341,40 +332,24 @@ export default function Signup() {
   };
 
   const CompleteProfileFormDoctor = () => {
-   
-    // const [auxFormData, setauxFormData] = useState({});
     const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-    // if (!e.target.value)
-    //   {
-    //     setFormData({...formData,[e.target.name]:""})
-    //   }
-    //   setauxFormData((prev)=>({
-    //     ...prev,
-    //     [e.target.name]: e.target.value,
-    //   }));
-    
-    formData.current[e.target.name]=e.target.value;
-    console.log(formData.current[e.target.name])
+      formData.current[e.target.name] = e.target.value;
+      console.log(formData.current[e.target.name]);
     };
-    
+
     // const form=formData.firstName? formData:auxFormData
     const handleSubmitFormDcotor = () => {
       // const validation = validateFormDoctor(form, accountType);
-      const validation=validateFormDoctor(formData.current,accountType)
+      const validation = validateFormDoctor(formData.current, accountType);
       setErrors(validation);
       if (Object.keys(validation).length === 0) {
-        // setFormData((prev)=>({...prev,...form}))
         handleNext();
       }
     };
-    
+
     const handleGenderChange = (e) => {
-      // setauxFormData({
-      //   ...form,
-      //   gender: e,
-      // });
-      formData.current["gender"]=e;
+      formData.current["gender"] = e;
     };
     return (
       <>
@@ -451,7 +426,7 @@ export default function Signup() {
                 id="gender"
                 name="gender"
                 onValueChange={handleGenderChange}
-                
+                defaultValue={formData.current.gender}
               >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a Gender" />
@@ -557,22 +532,21 @@ export default function Signup() {
     const [auxFormData, setauxFormData] = useState({});
     const [errors, setErrors] = useState({});
     const handleChange = (e) => {
-      setauxFormData((prev)=>({
+      setauxFormData((prev) => ({
         ...prev,
         [e.target.name]: e.target.value,
       }));
-      
     };
-    const form=formData.firstName? formData:auxFormData
+    const form = formData.firstName ? formData : auxFormData;
     const handleSubmitFormCompany = () => {
       const validation = validateFormCompany(form, accountType);
       setErrors(validation);
       if (Object.keys(validation).length === 0) {
-        setFormData((prev)=>({...prev,...form}))
+        setFormData((prev) => ({ ...prev, ...form }));
         handleNext();
       }
     };
-    
+
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -620,7 +594,7 @@ export default function Signup() {
   };
 
   const ReviewAccountDoctor = () => {
-   console.log(formData)
+    console.log(formData);
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -697,7 +671,7 @@ export default function Signup() {
             >
               Back
             </Button>
-            <Button className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]" >
+            <Button className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]">
               Create Account
             </Button>
           </div>
@@ -705,8 +679,6 @@ export default function Signup() {
       </>
     );
   };
-
-
 
   return (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
