@@ -14,23 +14,39 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   validateForm1,
   validateFormCompany,
   validateFormDoctor,
-} from "./../../assets/signup";
+} from "../../assets/signupVerifications";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import {
+  checkMail,
+  sendOtp,
+  signUp,
+  verifyCIN,
+  verifyOtp,
+} from "../../assets/Apis/assets";
+import Modal from "../../components/modal";
 
 export default function Signup() {
   const [accountType, setAccountType] = useState(null);
   const [currentForm, setCurrentForm] = useState(1);
 
   const formData = useRef({});
+  const handleChange = (e) => {
+    formData.current[e.target.name] = e.target.value;
+  };
+
+  const redirect=()=>{
+    window.location.replace('/login')
+  }
+
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
   const InitialForm = () => {
@@ -104,15 +120,24 @@ export default function Signup() {
 
   const FormCompanyDoctor = () => {
     const [errors, setErrors] = useState({});
-    const handleChange = (e) => {
-      formData.current[e.target.name] = e.target.value;
-    };
 
-    const handleSubmitForm1 = () => {
+    const handleSubmitForm1 = async () => {
       const validation = validateForm1(formData.current, accountType);
       setErrors(validation);
       if (Object.keys(validation).length === 0) {
-        handleNext();
+        if (accountType == "Doctor") {
+          const response = await verifyCIN(formData.current.cin);
+          if (response) {
+            setErrors((prev) => ({ ...prev, cin: "CIN Already Used" }));
+            return;
+          }
+        }
+        if (await checkMail(formData.current.email)) {
+          setErrors((prev) => ({ ...prev, email: "Email already used" }));
+        } else {
+          await sendOtp(formData.current.email);
+          handleNext();
+        }
       }
     };
 
@@ -255,6 +280,8 @@ export default function Signup() {
   };
 
   const OtpForm = () => {
+    const inputRef = useRef(null);
+    const [errors, setErrors] = useState({});
     const handleOtpChange = (value) => {
       setOtp(value);
     };
@@ -267,8 +294,20 @@ export default function Signup() {
         inputRef.current.focus();
       }
     }, [otp]);
-    const inputRef = useRef(null);
-    const VerifyOtp = () => {};
+
+    const verifycode = async () => {
+      const response = await verifyOtp(formData.current.email, otp);
+      if (response) {
+        handleNext();
+      } else {
+        setErrors({ otp: "Verify your code" });
+      }
+    };
+
+    const resendOtp = async () => {
+      const response = await sendOtp(formData.current.email);
+      console.log("resend" + response);
+    };
 
     return (
       <>
@@ -300,6 +339,11 @@ export default function Signup() {
                   </InputOTPGroup>
                 </InputOTP>
               </div>
+              {errors.otp && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.otp}
+                </span>
+              )}
               <div className="flex justify-between">
                 <Button
                   className="w-1/2 rounded-lg bg-gray-100 py-3 font-medium text-[#272643] hover:bg-gray-200"
@@ -310,7 +354,7 @@ export default function Signup() {
                 </Button>
                 <Button
                   className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]"
-                  onClick={handleNext}
+                  onClick={verifycode}
                 >
                   Verify
                 </Button>
@@ -319,7 +363,7 @@ export default function Signup() {
                 <Button
                   className="w-full rounded-lg bg-gray-100 py-3 font-medium text-[#272643] hover:bg-gray-200"
                   variant="outline"
-                  onClick={VerifyOtp}
+                  onClick={resendOtp}
                 >
                   Resend Code
                 </Button>
@@ -333,10 +377,6 @@ export default function Signup() {
 
   const CompleteProfileFormDoctor = () => {
     const [errors, setErrors] = useState({});
-    const handleChange = (e) => {
-      formData.current[e.target.name] = e.target.value;
-      console.log(formData.current[e.target.name]);
-    };
 
     // const form=formData.firstName? formData:auxFormData
     const handleSubmitFormDcotor = () => {
@@ -529,20 +569,11 @@ export default function Signup() {
   };
 
   const CompleteProfileFormCompany = () => {
-    const [auxFormData, setauxFormData] = useState({});
     const [errors, setErrors] = useState({});
-    const handleChange = (e) => {
-      setauxFormData((prev) => ({
-        ...prev,
-        [e.target.name]: e.target.value,
-      }));
-    };
-    const form = formData.firstName ? formData : auxFormData;
     const handleSubmitFormCompany = () => {
-      const validation = validateFormCompany(form, accountType);
+      const validation = validateFormCompany(formData.current, accountType);
       setErrors(validation);
       if (Object.keys(validation).length === 0) {
-        setFormData((prev) => ({ ...prev, ...form }));
         handleNext();
       }
     };
@@ -567,8 +598,13 @@ export default function Signup() {
                 name="address"
                 placeholder="123 Main St, Anytown USA"
                 onChange={handleChange}
-                value={formData.current.address}
+                defaultValue={formData.current.address}
               />
+              {errors.address && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.address}
+                </span>
+              )}
             </div>
 
             <div className="space-y-2">
@@ -578,8 +614,13 @@ export default function Signup() {
                 placeholder="Tell us about your company"
                 name="description"
                 onChange={handleChange}
-                value={formData.current.description}
+                defaultValue={formData.current.description}
               />
+              {errors.description && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.description}
+                </span>
+              )}
             </div>
           </div>
           <Button
@@ -593,8 +634,35 @@ export default function Signup() {
     );
   };
 
-  const ReviewAccountDoctor = () => {
-    console.log(formData);
+  const ReviewAccount = () => {
+    const doctor = accountType === "Doctor";
+    const data = formData.current;
+
+    const createAccount = async () => {
+      const response = await signUp(data, accountType);
+      if (response) {
+        console.log("Account Created");
+        handleNext();
+      } else {
+        console.log("problem occured");
+      }
+    };
+    const Cols2 = ({ title1, content1, title2, content2 }) => {
+      return (
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <span className="text-gray-500">{title1}</span>
+            <p>{content1}</p>
+          </div>
+          {title2 && (
+            <div>
+              <span className="text-gray-500">{title2}</span>
+              <p>{content2}</p>
+            </div>
+          )}
+        </div>
+      );
+    };
     return (
       <>
         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
@@ -607,71 +675,71 @@ export default function Signup() {
           <div className="text-left">
             <div className="text-lg font-medium">Review Information</div>
             <div className="grid gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-gray-500">CIN:</span>
-                  <p>{formData.current.cin}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Email:</span>
-                  <p>{formData.current.email}</p>
-                </div>
-              </div>
+              {doctor && (
+                <>
+                  <Cols2
+                    title1={"CIN :"}
+                    content1={data.cin}
+                    title2={"Email :"}
+                    content2={data.email}
+                  />
+                  <Cols2
+                    title1={"Last Name :"}
+                    content1={data.lastName}
+                    title2={"First Name :"}
+                    content2={data.firstName}
+                  />
+                  <Cols2
+                    title1={"Address :"}
+                    content1={data.address}
+                    title2={"Gender :"}
+                    content2={data.gender}
+                  />
+                  <Cols2
+                    title1={"Speciality :"}
+                    content1={data.speciality}
+                    title2={"Experience :"}
+                    content2={data.experience}
+                  />
+                  <Cols2
+                    title1={"Price :"}
+                    content1={data.price}
+                    title2={"Bio :"}
+                    content2={data.bio}
+                  />
+                </>
+              )}
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-gray-500">Last Name:</span>
-                  <p>{formData.current.lastName}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">First Name:</span>
-                  <p>{formData.current.firstName}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-gray-500">Address:</span>
-                  <p>{formData.current.address}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Gender:</span>
-                  <p>{formData.current.gender}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-gray-500">Specialty:</span>
-                  <p>{formData.current.speciality}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Experience:</span>
-                  <p>{formData.current.experience}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <span className="text-gray-500">Bio:</span>
-                  <p>{formData.current.bio}</p>
-                </div>
-                <div>
-                  <span className="text-gray-500">Price:</span>
-                  <p>{formData.current.price}</p>
-                </div>
-              </div>
+              {!doctor && (
+                <>
+                  <Cols2
+                    title1={accountType + " Name :"}
+                    content1={data.companyName}
+                    title2={"Email :"}
+                    content2={data.email}
+                  />
+                  <Cols2
+                    title1={"Address :"}
+                    content1={data.address}
+                    title2={"Description :"}
+                    content2={data.description}
+                  />
+                </>
+              )}
             </div>
           </div>
-          <div className="flex justify-between">
+          <div className="grid grid-cols-2 gap-4 mt-3">
             <Button
-              className="w-1/2 rounded-lg bg-gray-100 py-3 font-medium text-[#272643] hover:bg-gray-200"
+              className="w-full rounded-lg bg-gray-100 py-3 font-medium text-[#272643] hover:bg-gray-200"
               variant="outline"
               onClick={handleBack}
             >
               Back
             </Button>
-            <Button className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]">
+            <Button
+              className="w-full rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]"
+              onClick={createAccount}
+            >
               Create Account
             </Button>
           </div>
@@ -683,12 +751,12 @@ export default function Signup() {
   return (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <Progress value={currentForm * 20} className="h-3" />
+        <Progress value={100 / (7 - currentForm)} className="h-3" />
         <div className="text-sm text-gray-500 flex justify-end pb-2">
-          Step {currentForm} of 5
+          Step {currentForm} of 6
         </div>
 
-        <AnimatePresence>
+        <div>
           {currentForm === 1 && (
             <motion.div
               key="initialForm"
@@ -742,10 +810,24 @@ export default function Signup() {
               initial={{ x: "100%", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
             >
-              <ReviewAccountDoctor />
+              <ReviewAccount />
             </motion.div>
           )}
-        </AnimatePresence>
+          {currentForm === 6 && (
+            <motion.div
+              key="succes"
+              initial={{ x: "100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+            >
+              <Modal
+                title="Account Created"
+                content={"Your "+accountType+" account has been successfully created. You can now access your account and start using our services."}
+                buttonTitle="Go to Login"
+                onClick={redirect}
+              />
+            </motion.div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -2,11 +2,18 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 
 export default function Login() {
+  
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white">
-      <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg dark:bg-gray-900">
+      <motion.div
+        initial={{ x: "100%", opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg dark:bg-gray-900"
+      >
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight">
             Sign in to your account
@@ -14,12 +21,13 @@ export default function Login() {
           <div className="flex flex-row justify-center mt-4 mb-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 m-0"></p>
             Don't have an account?
-            <p
+            <Link
               className="font-medium text-[#272643] hover:underline dark:text-[#8da4f1] m-0 ml-1 "
               href="#"
+              to="/signup"
             >
               Sign up
-            </p>
+            </Link>
           </div>
         </div>
         <form action="#" className="space-y-6" method="POST">
@@ -41,12 +49,12 @@ export default function Login() {
               <Label htmlFor="password" className="mb-2">
                 Password
               </Label>
-              <p
+              <Link
                 className="text-sm font-medium text-[#272643] hover:underline dark:text-[#8da4f1]"
                 href="#"
               >
                 Forgot password?
-              </p>
+              </Link>
             </div>
             <Input
               autoComplete="current-password"
@@ -70,11 +78,12 @@ export default function Login() {
           <Button
             className="w-full bg-[#272643] text-white hover:bg-[#1c1d33] dark:bg-[#8da4f1] dark:text-gray-900 dark:hover:bg-[#6c84c4]"
             type="submit"
+            
           >
             Sign in
           </Button>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
