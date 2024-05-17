@@ -1,6 +1,6 @@
 import { RadioGroupItem, RadioGroup } from "@/components/ui/radio-group";
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
@@ -19,7 +19,7 @@ import {
   validateForm1,
   validateFormCompany,
   validateFormDoctor,
-} from "../../assets/signupVerifications";
+} from "../../assets/validations";
 import {
   InputOTP,
   InputOTPGroup,
@@ -33,20 +33,33 @@ import {
   verifyOtp,
 } from "../../assets/Apis/assets";
 import Modal from "../../components/modal";
+import { userContext } from "../../Context/userContext";
+import Loading from "../../components/loading";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
+  const { activeProfile } = useContext(userContext);
+  const [loading, setLoading] = useState(true);
   const [accountType, setAccountType] = useState(null);
   const [currentForm, setCurrentForm] = useState(1);
-
+  const navigate = useNavigate();
   const formData = useRef({});
   const handleChange = (e) => {
     formData.current[e.target.name] = e.target.value;
   };
 
-  const redirect=()=>{
-    window.location.replace('/login')
-  }
-
+  const redirect = () => {
+    navigate("/login");
+  };
+  useEffect(() => {
+    if (activeProfile != null) {
+      if (activeProfile.data) {
+        navigate("/dashboard");
+      } else {
+        setLoading(false);
+      }
+    }
+  }, [activeProfile]);
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
   const InitialForm = () => {
@@ -208,7 +221,6 @@ export default function Signup() {
                   name="email"
                   id="email"
                   placeholder="info@acme.com"
-                  required
                   type="email"
                   onChange={handleChange}
                   defaultValue={formData.current.email}
@@ -306,7 +318,6 @@ export default function Signup() {
 
     const resendOtp = async () => {
       const response = await sendOtp(formData.current.email);
-      console.log("resend" + response);
     };
 
     return (
@@ -378,9 +389,7 @@ export default function Signup() {
   const CompleteProfileFormDoctor = () => {
     const [errors, setErrors] = useState({});
 
-    // const form=formData.firstName? formData:auxFormData
     const handleSubmitFormDcotor = () => {
-      // const validation = validateFormDoctor(form, accountType);
       const validation = validateFormDoctor(formData.current, accountType);
       setErrors(validation);
       if (Object.keys(validation).length === 0) {
@@ -748,7 +757,7 @@ export default function Signup() {
     );
   };
 
-  return (
+  return !loading ? (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
         <Progress value={100 / (7 - currentForm)} className="h-3" />
@@ -821,7 +830,11 @@ export default function Signup() {
             >
               <Modal
                 title="Account Created"
-                content={"Your "+accountType+" account has been successfully created. You can now access your account and start using our services."}
+                content={
+                  "Your " +
+                  accountType +
+                  " account has been successfully created. You can now access your account and start using our services."
+                }
                 buttonTitle="Go to Login"
                 onClick={redirect}
               />
@@ -830,5 +843,7 @@ export default function Signup() {
         </div>
       </div>
     </div>
+  ) : (
+    <Loading />
   );
 }

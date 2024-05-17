@@ -1,13 +1,16 @@
+import { useContext } from 'react';
 import {API_BASE} from '../../../env.js'
 import { Get, Post } from '../requests';
+import { userContext } from '../../Context/userContext.jsx';
+import { jwtDecode } from "jwt-decode";
 export async function signUp(data,accountType)
 {
-    let api=API_BASE;
+    let path=API_BASE;
     switch (accountType){
-        case "Doctor": api+="/doctor/signup";break;
-        case "Pharmacy": api+="/pharmacy/signup";break;
-        case "Assurance": api+="/assurance/signup";break;
-        case "Company": api+="/company/signup";break;
+        case "Doctor": path+="/doctor/signup";break;
+        case "Pharmacy": path+="/pharmacy/signup";break;
+        case "Assurance": path+="/assurance/signup";break;
+        case "Company": path+="/company/signup";break;
     }
     let dataToSend;
     switch(accountType)
@@ -37,36 +40,71 @@ export async function signUp(data,accountType)
             break;
     }
     
-    const response=await Post(api,dataToSend);
+    const response=await Post(path,dataToSend);
     return response
 }
 
 
 export async function checkMail(email)
 {
-    const api=API_BASE+"/auth/checkMail";
-    const response=await Post(api,{"email":email})
+    const path=API_BASE+"/auth/checkMail";
+    const response=await Post(path,{"email":email})
     return response;
 }
 
 export async function verifyOtp(email,code)
 {
-    const api=API_BASE+"/auth/verifyCodeSignUp";
+    const path=API_BASE+"/auth/verifyCodeSignUp";
     const data={email,"code":parseInt(code)}
-    const response=await Post(api,data); 
+    const response=await Post(path,data); 
     return response;
 }
 
 export async function sendOtp(email)
 {
-    const api=API_BASE+"/auth/sendOtp";
-    const response=await Post(api,{"email":email})
+    const path=API_BASE+"/auth/sendOtp";
+    const response=await Post(path,{"email":email})
     return response;
 }
 
 export async function verifyCIN(cin)
 {
-    const api=API_BASE+"/doctor/"+cin;
-    const response=await Get(api)
+    const path=API_BASE+"/doctor/"+cin;
+    const response=await Get(path)
     return response; 
 }
+
+export async function login(email,password)
+
+{   
+    const path=API_BASE+"/auth/login";
+    const response=await Post(path,{email,password});
+    if (response.status===201)
+    {   
+        
+        return {"access":response.data}
+    }
+    else if(response.status===404)
+    {
+            return {"email":"Account with that email doesn't exist. Try again"}
+    }
+    else if (response.status===401)
+     {
+        return {"password":"Invalid Password"}
+    }
+    
+
+}
+export async function loadCurrentUser(token,role) {
+    const response = await Get(API_BASE + "/" + role + "/loadme", token);
+    if (response.status===200)
+        {   
+            return response.data
+        }
+    else
+    {
+        return false
+    }
+
+}
+

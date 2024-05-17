@@ -1,32 +1,20 @@
-import * as React from "react";
-import * as ReactDOM from "react-dom/client";
-import App from "./App.jsx";
-import "./index.css";
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Home from "./Pages/Home/home.jsx";
-import Login from "./Pages/Auth/login.jsx";
-import { ThemeProvider } from "./Context/themeContext.jsx";
-import Signup from "./Pages/Auth/signup.jsx";
+import App from "./App.jsx";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Home />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
-]);
-ReactDOM.createRoot(document.getElementById("root")).render(
+import { ThemeProvider } from "./Context/themeContext.jsx";
+import { UserContextProvider } from "./Context/userContext.jsx";
+
+import "./index.css";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(
   <React.StrictMode>
-    <ThemeProvider defaultTheme="light" storageKey="theme">
+    {/* <ThemeProvider defaultTheme="light" storageKey="theme"> */}
+    <UserContextProvider>
       <App />
-    </ThemeProvider>
-    <RouterProvider router={router} />
+    </UserContextProvider>
+    {/* </ThemeProvider> */}
   </React.StrictMode>
 );

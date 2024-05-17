@@ -38,11 +38,11 @@ export function validateForm1(data,type) {
     if (data.confirmPassword !== data.password) {
       errors.confirmPassword = messages.confirmPassword;
     }
-    return Object.keys(errors).length === 0 ? {} : errors;
+    return errors;
   }
   
   
-  function isValidEmail(email) {
+  export function isValidEmail(email) {
     const emailRegex= /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     return emailRegex.test(email);
   }
@@ -139,7 +139,7 @@ export function validateForm1(data,type) {
       {
         errors.price=messages.price;
       }
-      return Object.keys(errors).length === 0 ? {} : errors;
+      return errors;
   }
 
   export function validateFormCompany(data)
@@ -158,6 +158,26 @@ export function validateForm1(data,type) {
     {
       errors.description=messages.description
     }
-    return Object.keys(errors).length === 0 ? {} : errors;
+    return errors;
 
   }
+
+
+  export function validateLogin(email,password)
+{   const errors={}
+    const messages=
+    {
+        email: "Please provide a Valid Email Address",
+        password:"Please provide a Valid Password"
+    }
+    if (!email || !isValidEmail(email))
+    {
+        errors.email=messages.email;
+    }
+    if (!password || password.length<3)
+    {
+        errors.password=messages.password;
+    }
+
+    return errors;
+}

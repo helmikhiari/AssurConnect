@@ -9,8 +9,7 @@ const scrollToAbout=()=>(scrollToSection('about'))
 
 export default function Home() {
   return (
-    <>
-      <NavBar />
+    
       <div className="w-full bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white py-12 md:py-20 lg:py-28">
         <header>
           <div className="container mx-auto flex flex-col md:flex-row items-center justify-center px-4 md:px-6 gap-8 md:gap-12">
@@ -93,6 +92,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-    </>
+  
   );
 }
