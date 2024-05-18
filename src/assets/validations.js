@@ -1,3 +1,5 @@
+
+
 export function validateForm1(data,type) {
   
   function isValidCin(cin)
@@ -8,16 +10,16 @@ export function validateForm1(data,type) {
 
     const errors = {};
     const messages = {
-        companyName: "Please provide a valid "+type+" name",
+        name: "Please provide a valid "+type+" name",
         email: "Please provide a valid email address",
         confirmPassword: "Passwords do not match",
         cin:"Please provide a valid CIN"
       };
     if (type!="Doctor")
    {
-    if (!data.companyName || data.companyName.length < 5) {
-      console.log(data.companyName)
-      errors.companyName =messages.companyName;
+    if (!data.name || data.name.length < 5) {
+      console.log(data.name)
+      errors.name =messages.name;
     }
    }
    else
@@ -177,6 +179,45 @@ export function validateForm1(data,type) {
     if (!password || password.length<3)
     {
         errors.password=messages.password;
+    }
+
+    return errors;
+}
+
+export function validateChangePassword(oldPassword,newPassword,confirmNewPassword)
+{ const errors={}
+  const messages={
+    passwordsMatch:"New Password must be different from Old Password",
+    confirmation:"Passwords do not match",
+    required:"Required"
+  }
+
+  let passwordMessages;
+
+  if (!oldPassword)
+    {
+      errors.oldPassword=messages.required;
+    }
+   if (!newPassword)
+    {
+      errors.newPassword=messages.required;
+    }
+   if (!confirmNewPassword)
+    {
+      errors.confirmNewPassword=messages.required;
+    }
+   if (oldPassword===newPassword&&oldPassword&&newPassword)
+    {
+       errors.newPassword=messages.passwordsMatch;
+    }
+     
+    else if (newPassword&&(passwordMessages=isStrongPassword(newPassword))!=="")
+    {
+      errors.newPassword=passwordMessages;
+    }
+    else if (newPassword&&confirmNewPassword&&newPassword!==confirmNewPassword)
+    {
+      errors.confirmNewPassword=messages.confirmation;
     }
 
     return errors;

@@ -42,4 +42,20 @@ export async function Get(path,token)
     
 }
 
+export async function Patch(path,data,token)
+{    
+    try{
+      const head = {
+        headers: {Authorization: `Bearer ${token}`},
+      };
+     const response = await axios.patch(
+        path,
+        data,
+        head
+      );  
+      return response
+    } catch (error) {
+      return error.response
+    }
+}
 

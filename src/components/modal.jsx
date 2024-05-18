@@ -1,8 +1,13 @@
 import { Button } from "@/components/ui/button"
 
 export default function Modal({title,content,buttonTitle,onClick}) {
+  
+  const onSubmit=(e)=>{
+    e.preventDefault()
+    onClick()
+  }
   return (
-    
+            <form onSubmit={onSubmit}>
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="flex items-center justify-center">
                 <div className="h-12 w-12 rounded-full bg-[#272643] flex items-center justify-center text-white">
@@ -23,10 +28,10 @@ export default function Modal({title,content,buttonTitle,onClick}) {
                   {content}
                 </p>
               </div>
-              <Button className="w-full rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]" onClick={onClick}>
+              <Button className="w-full rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b]" type="submit">
                 {buttonTitle}
               </Button>
             </div>
-        
+            </form>
   )
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from "react";
+import React, { useState, useEffect, useRef, useContext, act } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   AlertDialogTrigger,
@@ -14,12 +14,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { CloudIcon, LogOutIcon, MenuIcon } from "../assets/icons/icons";
 import { userContext } from "../Context/userContext";
-
+import userIcon from "../assets/icons/placeholder.png"
 export default function SideBar({ links }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const sidebarRef = useRef();
-  const {setActiveProfile}=useContext(userContext);
+  const {setActiveProfile,activeProfile}=useContext(userContext);
   const navigate=useNavigate()
   const logOut=()=>
   { 
@@ -38,6 +38,7 @@ export default function SideBar({ links }) {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
+    console.log(activeProfile)
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -85,14 +86,14 @@ export default function SideBar({ links }) {
           <div className="space-y-2">
             <NavLink
               className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-400 transition-colors hover:bg-[#3a3d6b] hover:text-gray-50"
-              to="#"
+              to=""
             >
               <img
                 alt="Avatar"
                 className="rounded-full w-6 h-6 object-cover"
-                src="/placeholder.svg"
+                src={userIcon}
               />
-              <span>John Doe</span>
+              <p className="break-words w-full">{activeProfile.role=="Doctor"? activeProfile.data.firstName+" "+activeProfile.data.lastName : activeProfile.data.name}</p>
             </NavLink>
 
             <AlertDialog>

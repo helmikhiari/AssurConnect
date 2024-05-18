@@ -1,8 +1,6 @@
 import { useContext } from 'react';
 import {API_BASE} from '../../../env.js'
-import { Get, Post } from '../requests';
-import { userContext } from '../../Context/userContext.jsx';
-import { jwtDecode } from "jwt-decode";
+import { Get, Patch, Post } from '../requests';
 export async function signUp(data,accountType)
 {
     let path=API_BASE;
@@ -31,7 +29,7 @@ export async function signUp(data,accountType)
         case "Assurance":
         case "Pharmacy":
             dataToSend={
-                "name":data.companyName,
+                "name":data.name,
                 "address":data.address,
                 "email":data.email,
                 "password":data.password,
@@ -95,6 +93,7 @@ export async function login(email,password)
     
 
 }
+
 export async function loadCurrentUser(token,role) {
     const response = await Get(API_BASE + "/" + role + "/loadme", token);
     if (response.status===200)
@@ -107,4 +106,25 @@ export async function loadCurrentUser(token,role) {
     }
 
 }
+
+export async function changePassword(oldPassword,newPassword)
+{   const token=localStorage.getItem('token')
+    if (!token)
+    {
+        return null;
+    }
+    else{
+    const response=await Patch(API_BASE+"/auth/changePassword",{oldPassword,newPassword},token);
+    if (response.status===200)
+        return response
+    else if (response.status===403)
+        return {"oldPassword":"Invalid Current Password"};
+    else if (response.status===400)
+        return {"newPassword":"New Password must be different from Current Password"};
+    else
+        return {"error":"Error occured,Try refreshing the page"};
+    }
+}
+
+
 

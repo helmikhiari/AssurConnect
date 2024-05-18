@@ -35,12 +35,11 @@ export default function Login() {
     setErrors(validation);
     if (Object.keys(validation).length === 0) {
       const response = await login(email, password);
-      console.log("response", response);
       if (response.email || response.password) {
         setErrors(response);
       } else if (response.access) {
         localStorage.setItem("token", response.access);
-        navigate("/dashboard");
+        window.location.replace("/dashboard");
       }
     }
   };

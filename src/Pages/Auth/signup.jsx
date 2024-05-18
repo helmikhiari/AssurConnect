@@ -182,14 +182,14 @@ export default function Signup() {
                   </Label>
                   <Input
                     id="company-name"
-                    name="companyName"
+                    name="name"
                     placeholder="DunDill"
-                    defaultValue={formData.current.companyName}
+                    defaultValue={formData.current.name}
                     onChange={handleChange}
                   />
-                  {errors.companyName && (
+                  {errors.name && (
                     <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.companyName}
+                      {errors.name}
                     </span>
                   )}
                 </div>
@@ -723,7 +723,7 @@ export default function Signup() {
                 <>
                   <Cols2
                     title1={accountType + " Name :"}
-                    content1={data.companyName}
+                    content1={data.name}
                     title2={"Email :"}
                     content2={data.email}
                   />

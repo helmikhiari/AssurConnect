@@ -40,7 +40,7 @@ const DashboardLayout = () => {
       <SideBar links={links} />
       <div className="flex flex-col grow shrink w-screen h-screen">
         <InfoBar />
-        <div className="h-screen sm:ml-[200px]  pt-[50px] sm:pt-6 w-full justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white p-6">
+        <div className="h-screen sm:ml-[200px]  pt-[50px] sm:pt-6  justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white p-6">
           <Outlet />
         </div>
       </div>

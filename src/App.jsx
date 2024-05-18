@@ -9,7 +9,7 @@ import { userContext } from "./Context/userContext.jsx";
 import Login from "./Pages/Auth/login";
 import DashboardLayout from "./Pages/DashBoards/dashboardLayout";
 import Settings from "./Pages/DashBoards/settings.jsx";
-import Profile from "./Pages/DashBoards/Profile.jsx";
+import Profile from "./Pages/DashBoards/profile.jsx";
 import Dashboard from "./Pages/DashBoards/dashboard.jsx";
 import Contact from "./Pages/Home/contact.jsx";
 
