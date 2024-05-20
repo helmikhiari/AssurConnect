@@ -12,6 +12,7 @@ import Settings from "./Pages/DashBoards/settings.jsx";
 import Profile from "./Pages/DashBoards/profile.jsx";
 import Dashboard from "./Pages/DashBoards/dashboard.jsx";
 import Contact from "./Pages/Home/contact.jsx";
+import ForgetPassword from "./Pages/Auth/forgetPassword.jsx";
 
 const router = createBrowserRouter([
   {
@@ -34,6 +35,10 @@ const router = createBrowserRouter([
       {
         path: "/signup",
         element: <Signup />,
+      },
+      {
+        path:"/forgetPassword",
+        element:<ForgetPassword/>,
       },
     ],
   },

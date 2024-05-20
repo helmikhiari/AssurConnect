@@ -1,5 +1,6 @@
 
 
+
 export function validateForm1(data,type) {
   
   function isValidCin(cin)
@@ -220,5 +221,50 @@ export function validateChangePassword(oldPassword,newPassword,confirmNewPasswor
       errors.confirmNewPassword=messages.confirmation;
     }
 
+    return errors;
+}
+
+
+export function validateMail(email)
+{ 
+  if (!email)
+    {
+      return {email:"Required"}
+    }
+  else if (!isValidEmail(email))
+    {
+      return { email: "Please provide a valid email address"};
+    }
+  else
+  {
+    return {};
+  }
+}
+
+
+export function validationResetPassword(newPassword,confirmNewPassword)
+{
+  const errors={}
+  if (!newPassword)
+    {
+      errors.newPassword="Required";
+    }
+  if (!confirmNewPassword)
+    {
+      errors.confirmNewPassword="Required";
+    }
+  if (newPassword&&confirmNewPassword)
+    {
+      const errorMessages=isStrongPassword(newPassword);
+      if (errorMessages!="")
+        {
+          errors.newPassword=errorMessages;
+        }
+      else if (newPassword!=confirmNewPassword)
+        {
+          errors.confirmNewPassword="Passwords should match";
+        }
+      
+    }
     return errors;
 }

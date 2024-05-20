@@ -140,7 +140,7 @@ export default function Signup() {
       if (Object.keys(validation).length === 0) {
         if (accountType == "Doctor") {
           const response = await verifyCIN(formData.current.cin);
-          if (response) {
+          if (response.data) {
             setErrors((prev) => ({ ...prev, cin: "CIN Already Used" }));
             return;
           }

@@ -47,7 +47,9 @@ export async function checkMail(email)
 {
     const path=API_BASE+"/auth/checkMail";
     const response=await Post(path,{"email":email})
-    return response;
+    console.log(response)
+    return response.data;
+    
 }
 
 export async function verifyOtp(email,code)
@@ -60,7 +62,7 @@ export async function verifyOtp(email,code)
 
 export async function sendOtp(email)
 {
-    const path=API_BASE+"/auth/sendOtp";
+    const path=API_BASE+"/auth/sendOtp";    
     const response=await Post(path,{"email":email})
     return response;
 }
@@ -69,7 +71,7 @@ export async function verifyCIN(cin)
 {
     const path=API_BASE+"/doctor/"+cin;
     const response=await Get(path)
-    return response; 
+    return response.data; 
 }
 
 export async function login(email,password)
@@ -116,7 +118,7 @@ export async function changePassword(oldPassword,newPassword)
     else{
     const response=await Patch(API_BASE+"/auth/changePassword",{oldPassword,newPassword},token);
     if (response.status===200)
-        return response
+        return response.data
     else if (response.status===403)
         return {"oldPassword":"Invalid Current Password"};
     else if (response.status===400)
@@ -126,5 +128,44 @@ export async function changePassword(oldPassword,newPassword)
     }
 }
 
+export async function sendOtpForgetPassword(email)
+{
+    const response=await Post(API_BASE+"/auth/forgetPasswordotp",{email});
+    if (response.status===201)
+        return response.data
+    else if (response.status===404)
+        return {"email":"User not found"};
+    else 
+    return null;
+}
 
 
+export async function verifyOtpResetPassword(otp,token)
+{
+    const response=await Post(API_BASE+"/auth/verifyCode",{code:otp},token);
+    if (response.status===201)
+        {
+            return response.data;
+        }
+    else
+    {
+        return {error:"Error Occured"};
+    }
+}
+
+export async function resetPassword(newPassword,token)
+{
+    const response=await Patch(API_BASE+'/auth/resetPasswordOtp',{newPassword},token);
+    if (response.status===200 && response.data===true)
+        {
+            return true;
+        }
+    else if (response.status===409)
+        {
+            return {newPassword:"Your new password cannot be the same as your old password. Please choose a different password."};
+        }
+    else
+        {
+            return {confirmNewPassword:"Error Occured"};
+        }
+}

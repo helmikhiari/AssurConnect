@@ -2,7 +2,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { login } from "../../assets/Apis/assets";
 import { useContext, useState, useEffect } from "react";
@@ -58,13 +58,12 @@ export default function Login() {
           <div className="flex flex-row justify-center mt-4 mb-4">
             <p className="text-sm text-gray-600 dark:text-gray-400 m-0"></p>
             Don't have an account?
-            <Link
+            <NavLink
               className="font-medium text-[#272643] hover:underline dark:text-[#8da4f1] m-0 ml-1 "
-              href="#"
               to="/signup"
             >
               Sign up
-            </Link>
+            </NavLink>
           </div>
         </div>
         <form className="space-y-6" onSubmit={onSubmit} >
@@ -90,12 +89,12 @@ export default function Login() {
               <Label htmlFor="password" className="mb-2">
                 Password
               </Label>
-              <Link
+              <NavLink
                 className="text-sm font-medium text-[#272643] hover:underline dark:text-[#8da4f1]"
-                href="#"
+                to="/forgetPassword"
               >
                 Forgot password?
-              </Link>
+              </NavLink>
             </div>
             <Input
               autoComplete="current-password"
