@@ -13,7 +13,9 @@ root.render(
   <React.StrictMode>
     {/* <ThemeProvider defaultTheme="light" storageKey="theme"> */}
     <UserContextProvider>
+      
       <App />
+      
     </UserContextProvider>
     {/* </ThemeProvider> */}
   </React.StrictMode>

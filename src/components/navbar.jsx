@@ -5,7 +5,7 @@ export default function NavBar() {
   const active = "text-md font-bold underline";
   const unactive = "text-sm font-medium hover:underline";
   return (
-    <header className="bg-[#272643] text-gray-50 px-4 md:px-6 h-auto flex items-center flex-col sm:flex-row sm:h-16 ">
+    <header className="bg-[#272643] text-gray-50 px-4 md:px-6 h-auto flex items-center flex-col sm:flex-row sm:h-16">
       <NavLink className="flex items-center gap-2 bg-transparent pb-5 sm:pb-0">
         <MountainIcon className="h-6 w-6" />
         <span className="text-lg font-semibold ">AssurConnect</span>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext, act } from "react";
+import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   AlertDialogTrigger,
@@ -86,13 +87,17 @@ export default function SideBar({ links }) {
           <div className="space-y-2">
             <NavLink
               className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-400 transition-colors hover:bg-[#3a3d6b] hover:text-gray-50"
-              to=""
+              to="/dashboard/profile"
             >
-              <img
-                alt="Avatar"
-                className="rounded-full w-6 h-6 object-cover"
-                src={userIcon}
-              />
+              <Avatar className="h-10 w-10 text-darkblue">
+            <AvatarImage src="elj" />
+            {activeProfile.role==="Doctor"&&<AvatarFallback>
+              {activeProfile.data.firstName[0] + activeProfile.data.lastName[0]}
+            </AvatarFallback>}
+            {(activeProfile.role==="Company"||activeProfile.role==="Assurance"||activeProfile.role==="Pharmacy")&&<AvatarFallback>
+              {activeProfile.data.name[0]+activeProfile.data.name[1]}
+            </AvatarFallback>}
+          </Avatar>
               <p className="break-words w-full">{activeProfile.role=="Doctor"? activeProfile.data.firstName+" "+activeProfile.data.lastName : activeProfile.data.name}</p>
             </NavLink>
 

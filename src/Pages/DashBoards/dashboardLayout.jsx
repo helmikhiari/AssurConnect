@@ -36,11 +36,11 @@ const DashboardLayout = () => {
   }, [activeProfile]);
 
   return !loading ? (
-    <div className="flex">
-      <SideBar links={links} />
+    <div className="flex h-screen overflow-hidden ">
+      <SideBar links={links} className="sticky top-0 h-full"/>
       <div className="flex flex-col grow shrink w-screen h-screen">
         <InfoBar />
-        <div className="h-screen sm:ml-[200px]  pt-[50px] sm:pt-6  justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white p-6">
+        <div className="flex-grow overflow-y-auto h-screen sm:ml-[200px]  pt-[50px] sm:pt-6  justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white p-6">
           <Outlet />
         </div>
       </div>

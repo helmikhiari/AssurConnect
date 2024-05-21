@@ -22,15 +22,17 @@ import {
   sendOtpForgetPassword,
   verifyOtpResetPassword,
 } from "../../assets/Apis/assets";
-import { validateMail, validationResetPassword } from "../../assets/validations";
+import {
+  validateMail,
+  validationResetPassword,
+} from "../../assets/validations";
 import Modal from "../../components/modal";
-
 
 export default function ForgetPassword() {
   const navigate = useNavigate();
   const [token, setToken] = useState(null);
   const [currentForm, setCurrentForm] = useState(0);
-  const form={newPassword:"",confirmNewPassword:""};
+  const form = { newPassword: "", confirmNewPassword: "" };
   let email = "";
   const handleNext = () => setCurrentForm((prev) => prev + 1);
   const handleBack = () => setCurrentForm((prev) => prev - 1);
@@ -40,9 +42,9 @@ export default function ForgetPassword() {
   };
   const SendOtp = () => {
     const [errors, setErrors] = useState({});
-    const [disabled,setDisabled]=useState(false);
+    const [disabled, setDisabled] = useState(false);
     const onSubmit = async (e) => {
-      setDisabled(true)
+      setDisabled(true);
       e.preventDefault();
       const validation = validateMail(email);
       setErrors(validation);
@@ -63,7 +65,7 @@ export default function ForgetPassword() {
           });
         }
       }
-      setDisabled(false)
+      setDisabled(false);
     };
 
     return (
@@ -126,7 +128,7 @@ export default function ForgetPassword() {
   const OtpForm = () => {
     const inputRef = useRef(null);
     const [errors, setErrors] = useState({});
-    
+
     const handleOtpChange = (value) => {
       setOtp(value);
     };
@@ -152,7 +154,7 @@ export default function ForgetPassword() {
     };
 
     const resendOtp = async () => {
-      const response = await sendOtp(email);
+      const response = await sendOtpForgetPassword(email);
     };
 
     return (
@@ -221,101 +223,100 @@ export default function ForgetPassword() {
     );
   };
 
-  
-  const ResetPassword=()=>
-    {
-      const [errors,setErrors]=useState({})
-      const [disabled,setDisabled]=useState();
-      
+  const ResetPassword = () => {
+    const [errors, setErrors] = useState({});
+    const [disabled, setDisabled] = useState();
 
-      const handleChange = (e) => {
-        form[e.target.name] = e.target.value;
-      };
+    const handleChange = (e) => {
+      form[e.target.name] = e.target.value;
+    };
 
-      const onSubmit=async(e)=>
-        {
-
-          e.preventDefault();
-          setDisabled(true);
-          const validation=validationResetPassword(form.newPassword,form.confirmNewPassword);
-          if (Object.keys(validation).length===0)
-            { 
-              console.log('token : '+token);
-              const response=await resetPassword(form.newPassword,token);
-              if (response===true)
-                {
-                  handleNext();
-                }
-              else
-              {
-                setErrors(response);
-              }
-            }
-          else
-          {
-            setErrors(validation);
-          }
-          setDisabled(false)
+    const onSubmit = async (e) => {
+      e.preventDefault();
+      setDisabled(true);
+      const validation = validationResetPassword(
+        form.newPassword,
+        form.confirmNewPassword
+      );
+      if (Object.keys(validation).length === 0) {
+        console.log("token : " + token);
+        const response = await resetPassword(form.newPassword, token);
+        if (response === true) {
+          handleNext();
+        } else {
+          setErrors(response);
         }
-      return (
-       <>
-            <div className="mb-6 flex items-center justify-center">
-              <NavLink to='/'>
-                <MountainIcon className="h-8 w-8 text-[#272643]" />
-              </NavLink>
-            </div>
-            <h1 className="mb-4 text-2xl font-bold text-[#272643]">Reset Password</h1>
-            <p className="mb-6 text-gray-500">Enter your new password and confirm it.</p>
-            <form onSubmit={onSubmit}>
-              <div className="mb-4 text-left py-2">
-                <Label className="mb-2 block text-gray-700" htmlFor="new-password">
-                  New Password
-                </Label>
-                <Input
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-[#4B6CB7] focus:outline-none focus:ring-2 focus:ring-[#4B6CB7]"
-                  id="new-password"
-                  placeholder="Enter a new password"
-                  type="password"
-                  name="newPassword"
-                  onChange={handleChange}
-                  defaultValue={form.newPassword}
-                />
-                {errors.newPassword && (
+      } else {
+        setErrors(validation);
+      }
+      setDisabled(false);
+    };
+    return (
+      <>
+        <div className="mb-6 flex items-center justify-center">
+          <NavLink to="/">
+            <MountainIcon className="h-8 w-8 text-[#272643]" />
+          </NavLink>
+        </div>
+        <h1 className="mb-4 text-2xl font-bold text-[#272643]">
+          Reset Password
+        </h1>
+        <p className="mb-6 text-gray-500">
+          Enter your new password and confirm it.
+        </p>
+        <form onSubmit={onSubmit}>
+          <div className="mb-4 text-left py-2">
+            <Label className="mb-2 block text-gray-700" htmlFor="new-password">
+              New Password
+            </Label>
+            <Input
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-[#4B6CB7] focus:outline-none focus:ring-2 focus:ring-[#4B6CB7]"
+              id="new-password"
+              placeholder="Enter a new password"
+              type="password"
+              name="newPassword"
+              onChange={handleChange}
+              defaultValue={form.newPassword}
+            />
+            {errors.newPassword && (
               <span className="text-red-500 flex justify-start text-sm ">
                 {errors.newPassword}
               </span>
             )}
-              </div>
-              <div className="mb-4 text-left py-2">
-                <Label className="mb-2 block text-gray-700" htmlFor="confirm-password">
-                  Confirm New Password
-                </Label>
-                <Input
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-[#4B6CB7] focus:outline-none focus:ring-2 focus:ring-[#4B6CB7]"
-                  id="confirm-password"
-                  placeholder="Confirm your new password" 
-                  type="password"
-                  name="confirmNewPassword"
-                  onChange={handleChange}
-                  defaultValue={form.confirmNewPassword}
-                />
-                {errors.confirmNewPassword && (
+          </div>
+          <div className="mb-4 text-left py-2">
+            <Label
+              className="mb-2 block text-gray-700"
+              htmlFor="confirm-password"
+            >
+              Confirm New Password
+            </Label>
+            <Input
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-[#4B6CB7] focus:outline-none focus:ring-2 focus:ring-[#4B6CB7]"
+              id="confirm-password"
+              placeholder="Confirm your new password"
+              type="password"
+              name="confirmNewPassword"
+              onChange={handleChange}
+              defaultValue={form.confirmNewPassword}
+            />
+            {errors.confirmNewPassword && (
               <span className="text-red-500 flex justify-start text-sm">
                 {errors.confirmNewPassword}
               </span>
             )}
-              </div>
-              <Button
-                className="mb-4 w-full rounded-md bg-[#272643] py-2 font-bold text-white hover:bg-[#1e1e3d] focus:outline-none focus:ring-2 focus:ring-[#272643] focus:ring-offset-2"
-                type="submit"
-                disabled={disabled}
-              >
-                Reset Password
-              </Button>
-            </form>
-        </>
-      )
-    }
+          </div>
+          <Button
+            className="mb-4 w-full rounded-md bg-[#272643] py-2 font-bold text-white hover:bg-[#1e1e3d] focus:outline-none focus:ring-2 focus:ring-[#272643] focus:ring-offset-2"
+            type="submit"
+            disabled={disabled}
+          >
+            Reset Password
+          </Button>
+        </form>
+      </>
+    );
+  };
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white">
       <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-lg">

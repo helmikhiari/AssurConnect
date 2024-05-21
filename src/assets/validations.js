@@ -268,3 +268,74 @@ export function validationResetPassword(newPassword,confirmNewPassword)
     }
     return errors;
 }
+
+
+export function validateEditProfileDoctor(data)
+{
+  const errors={}
+  const messages=
+  {
+    address: "Please provide a valid Address",
+    bio: "Please provide a bio with at least 20 characters",
+    firstName:"Please provide a valid FirstName",
+    lastName:"Please provide a valid LastName",
+    gender:"Gender is required",
+    experience:"Please provide a valid Experience",
+    speciality:"Please provide a valid Speciality",
+    price:"Please provide a valid Price"
+  }
+  console.log("data",data)
+   if (data.hasOwnProperty("firstName")&& !isValid(data.firstName,2))
+    {
+      errors.firstName=messages.firstName
+    }
+   if (data.hasOwnProperty("lastName")&&!isValid(data.lastName,2))
+    {
+      errors.lastName=messages.lastName
+    }
+   if (data.hasOwnProperty("address")&&!isValid(data.address,6))
+    {
+      errors.address=messages.address
+    }
+   if (data.hasOwnProperty("gender")&&!data.gender)
+    {
+      errors.gender=messages.gender;
+    }
+   if (data.hasOwnProperty("speciality")&&!isValid(data.speciality,4))
+    {
+      errors.speciality=messages.speciality
+    }
+   if (data.hasOwnProperty("experience")&&(!data.experience || isNaN(data.experience) || parseInt(data.experience) < 0))
+    {
+      errors.experience=messages.experience
+    }
+   if (data.hasOwnProperty("price")&&(!data.price || isNaN(data.price) || parseFloat(data.price) < 0))
+    {
+      errors.price=messages.price;
+    }
+    return errors;
+}
+
+
+export function validateEditProfileCompany(data)
+{
+  const errors={};
+  const messages={
+    name: "Please provide a valid  name",
+    address: "Please provide a valid Address",
+    description: "Please provide a bio with at least 20 characters",
+  }
+  if (data.name && data.name.length < 5) 
+    {
+      errors.name=messages.name
+    }
+    if (data.hasOwnProperty("address")&&!isValid(data.address,6))
+    {
+        errors.address=messages.address
+    }
+    if (data.description && data.description.length<20)
+    {
+      errors.description=messages.description;
+    }
+    return errors;
+} 

@@ -169,3 +169,21 @@ export async function resetPassword(newPassword,token)
             return {confirmNewPassword:"Error Occured"};
         }
 }
+
+export async function updateDoctor(data,token)
+{
+    const response=await Patch(API_BASE+'/doctor/edit',data,token)
+    if (response.status===200 && response.data===true)
+        return true;
+    else
+    return response;
+}
+
+export async function updateCompany(data,token,role)
+{
+    const response=await Patch(API_BASE+'/'+role+'/edit',data,token)
+    if (response.status===200 && response.data===true)
+        return true;
+    else
+    return response;
+}
