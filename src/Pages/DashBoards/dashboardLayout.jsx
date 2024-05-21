@@ -3,24 +3,12 @@ import SideBar from "../../components/sidebar";
 import { Outlet, useNavigate } from "react-router-dom";
 import { userContext } from "../../Context/userContext";
 import Loading from "../../components/loading";
-import { DashboardIcon, SettingsIcon } from "../../assets/icons/icons";
+import { AppointmentIcon, DashboardIcon, SettingsIcon } from "../../assets/icons/icons";
 import InfoBar from "../../components/infobar";
-
+import appImg from "../../assets/icons/appointment.png"
 const DashboardLayout = () => {
   const [loading, setLoading] = useState(true);
-  const links = [
-    {
-      text: "Dashboard",
-      url: "/dashboard",
-      icon: <DashboardIcon className="h-5 w-5" />,
-    },
-
-    {
-      text: "Setting",
-      url: "/dashboard/settings",
-      icon: <SettingsIcon className="h5 w-5" />,
-    },
-  ];
+ 
   const navigate = useNavigate();
   const { activeProfile } = useContext(userContext);
   useEffect(() => {
@@ -35,6 +23,32 @@ const DashboardLayout = () => {
     }
   }, [activeProfile]);
 
+
+  const links = [
+    {
+      text: "Dashboard",
+      url: "/dashboard",
+      icon: <DashboardIcon className="h-5 w-5" />,
+    },
+
+    {
+      text: "Setting",
+      url: "/dashboard/settings",
+      icon: <SettingsIcon className="h-5 w-5" />,
+    },
+  ];
+
+  if (activeProfile?.role==="Doctor")
+    {
+      links.push(
+        {
+          text:"Appointments",
+          url:"/dashboard/appointments",
+          icon:<AppointmentIcon className="h-6 w-6"/>
+        }
+      )
+    }
+  
   return !loading ? (
     <div className="flex h-screen overflow-hidden ">
       <SideBar links={links} className="sticky top-0 h-full"/>

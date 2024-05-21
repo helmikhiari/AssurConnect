@@ -12,8 +12,8 @@ export const UserContextProvider = ({ children }) => {
   const loadMe = async (token) => {
     const decodedJwt = jwtDecode(token);
     const r = decodedJwt.role;
-    const response = await loadCurrentUser(token,r)
-    return {data:response,role:r};
+    const response = await loadCurrentUser(token, r);
+    return { data: response, role: r };
   };
 
   const value = {

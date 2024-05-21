@@ -110,6 +110,7 @@ export default function DoctorProfile({ profile }) {
               type="email"
               disabled
               name="cin"
+              onChange={handleChange}
             />
           </div>
 
@@ -133,6 +134,7 @@ export default function DoctorProfile({ profile }) {
               defaultValue={profile.firstName}
               id="first-name"
               name="firstName"
+              onChange={handleChange}
             />
             {errors.firstName && (
               <span className="text-red-500 flex justify-start text-sm ">
