@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import {API_BASE} from '../../../env.js'
 import { Get, Patch, Post } from '../requests';
+import { correctDate, formatDateTime, stringToDateBar } from '../functions.js';
 export async function signUp(data,accountType)
 {
     let path=API_BASE;
@@ -69,7 +70,7 @@ export async function sendOtp(email)
 
 export async function verifyCIN(cin)
 {
-    const path=API_BASE+"/doctor/"+cin;
+    const path=API_BASE+"/doctor/verifyCin/"+cin;
     const response=await Get(path)
     return response.data; 
 }
@@ -186,4 +187,36 @@ export async function updateCompany(data,token,role)
         return true;
     else
     return response;
+}
+
+
+export async function getNextApppointment(token)
+{
+    const response=await Get(API_BASE+'/doctor/getNextApp',token)
+    if (response.status===200)
+    {   console.log(response)
+        response.data.nextApp.date=correctDate(response.data.nextApp.date);
+        response.data.prevApp.date=stringToDateBar(response.data.prevApp.date);
+        return response.data;
+    }
+    else
+    {
+        return null;
+    }
+
+}
+
+
+export async function getTodayAppointments(token)
+{
+    const response=await Get(API_BASE+"/doctor/todayAppointment",token);
+    if (response.status===200)
+    {
+        return response.data;
+    }
+    else
+    {
+        return null
+    }
+
 }

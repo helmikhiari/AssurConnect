@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { userContext } from '../../Context/userContext';
 import DoctorDashboard from './Doctor/doctorDashboard';
+import CompanyProfile from './Company/companyProfile';
 ////main dashboard same route for every user ,this contains dashboards with switch will be selection of component not of an other route
 
 export default function Dashboard() {

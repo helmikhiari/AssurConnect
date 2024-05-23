@@ -140,7 +140,8 @@ export default function Signup() {
       if (Object.keys(validation).length === 0) {
         if (accountType == "Doctor") {
           const response = await verifyCIN(formData.current.cin);
-          if (response.data) {
+          
+          if (response===true) {
             setErrors((prev) => ({ ...prev, cin: "CIN Already Used" }));
             return;
           }
@@ -760,7 +761,7 @@ export default function Signup() {
   return !loading ? (
     <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <Progress value={100 / (7 - currentForm)} className="h-3" />
+        <Progress value={(100/6)*currentForm} className="h-3" />
         <div className="text-sm text-gray-500 flex justify-end pb-2">
           Step {currentForm} of 6
         </div>

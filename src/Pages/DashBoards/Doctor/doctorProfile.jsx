@@ -24,7 +24,7 @@ import { stringToDate } from "../../../assets/functions";
 import { validateEditProfileDoctor } from "../../../assets/validations";
 import { updateDoctor } from "../../../assets/Apis/assets";
 import AlertModal from "./../../../components/alertModal";
-
+///birthdate dto backend signup correction
 const updates = {};
 export default function DoctorProfile({ profile }) {
   const birthDate = stringToDate(profile.birthDate);
@@ -106,8 +106,8 @@ export default function DoctorProfile({ profile }) {
             <Label htmlFor="cin">CIN</Label>
             <Input
               defaultValue={profile.cin}
-              id="email"
-              type="email"
+              id="cin"
+              
               disabled
               name="cin"
               onChange={handleChange}
@@ -115,7 +115,7 @@ export default function DoctorProfile({ profile }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="birthdate">Last Name</Label>
+            <Label htmlFor="last-name">Last Name</Label>
             <Input
               defaultValue={profile.lastName}
               id="last-name"
@@ -129,7 +129,7 @@ export default function DoctorProfile({ profile }) {
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="first-name">First Name</Label>
             <Input
               defaultValue={profile.firstName}
               id="first-name"

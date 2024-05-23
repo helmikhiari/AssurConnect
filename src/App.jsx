@@ -13,56 +13,12 @@ import Profile from "./Pages/DashBoards/profile.jsx";
 import Dashboard from "./Pages/DashBoards/dashboard.jsx";
 import Contact from "./Pages/Home/contact.jsx";
 import ForgetPassword from "./Pages/Auth/forgetPassword.jsx";
+import Appointments from "./Pages/DashBoards/Doctor/appointments.jsx";
+import Unauthorized from "./Pages/unauthorized.jsx";
+import ProtectedRoute from "./components/protectedRoute.jsx";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <RootLayout />,
-    children: [
-      { element: <Home />, index: true },
-      {
-        path: "/login",
-        element: <Login />,
-      },
-      {
-        path: "/about",
-        element: <AboutUs />,
-      },
-      {
-        path: "/contact",
-        element: <Contact />,
-      },
-      {
-        path: "/signup",
-        element: <Signup />,
-      },
-      {
-        path:"/forgetPassword",
-        element:<ForgetPassword/>,
-      },
-    ],
-  },
-  {
-    path: "/dashboard",
-    element: <DashboardLayout />,
-    children: [
-      {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "/dashboard/settings",
-        element: <Settings />,
-      },
-      {
-        path: "/dashboard/profile",
-        element: <Profile />,
-      },
-    ],
-  },
-]);
 export default function App() {
-  const { loadMe, setActiveProfile } = useContext(userContext);
+  const { loadMe, setActiveProfile, activeProfile } = useContext(userContext);
   useEffect(() => {
     const fetchData = async () => {
       const token = localStorage.getItem("token");
@@ -77,6 +33,67 @@ export default function App() {
 
     fetchData();
   }, []);
+
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <RootLayout />,
+      children: [
+        { element: <Home />, index: true },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/about",
+          element: <AboutUs />,
+        },
+        {
+          path: "/contact",
+          element: <Contact />,
+        },
+        {
+          path: "/signup",
+          element: <Signup />,
+        },
+        {
+          path: "/forgetPassword",
+          element: <ForgetPassword />,
+        },
+      ],
+    },
+    {
+      path: "/dashboard",
+      element: <DashboardLayout />,
+      children: [
+        {
+          index: true,
+          element: <Dashboard />,
+        },
+        {
+          path: "/dashboard/settings",
+          element: <Settings />,
+        },
+        {
+          path: "/dashboard/profile",
+          element: <Profile />,
+        },
+        {
+          path: "/dashboard/appointments",
+          element: (
+            <ProtectedRoute allowedRole="Doctor" role={activeProfile?.role}>
+              <Appointments  />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/unauthorized",
+          element: <Unauthorized />,
+        },
+      ],
+    },
+  ]);
+
   return (
     <RouterProvider router={router}>
       <RootLayout />

@@ -20,13 +20,9 @@ export default function SideBar({ links }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
   const sidebarRef = useRef();
-  const { setActiveProfile, activeProfile } = useContext(userContext);
+  const { logOut, activeProfile } = useContext(userContext);
   const navigate = useNavigate();
-  const logOut = () => {
-    setActiveProfile({ data: false });
-    localStorage.clear();
-    navigate("/login");
-  };
+  
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleClickOutside = (event) => {
@@ -47,6 +43,11 @@ export default function SideBar({ links }) {
     setIsOpen(false);
   }, [location]);
 
+  const navigateHome=()=>
+    {
+      navigate('/')
+    }
+
   return (
     <div className="flex flex-col h-screen w-auto drop-shadow  z-40 ">
       <div
@@ -57,7 +58,7 @@ export default function SideBar({ links }) {
       >
         <div className="flex flex-col h-full justify-between px-6 py-8 drop-shadow">
           <div className="space-y-6">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={navigateHome}>
               <CloudIcon className="h-6 w-6 text-gray-50" />
               <span className="text-lg font-semibold text-gray-50 ">
                 AssurConnect

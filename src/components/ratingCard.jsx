@@ -14,11 +14,11 @@ export default function RatingCard({title,rating,numberOfReviews}) {
       <div className="flex justify-center items-center gap-2">
         <div className="text-2xl font-bold">{rating}</div>
         <div className="flex items-center gap-1">
-          <StarIcon className="w-5 h-5 fill-primary" />
-          <StarIcon className="w-5 h-5 fill-primary" />
-          <StarIcon className="w-5 h-5 fill-primary" />
-          <StarIcon className="w-5 h-5 fill-primary" />
-          <StarIcon className="w-5 h-5 fill-primary" />
+          <StarIcon className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+          <StarIcon className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+          <StarIcon className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+          <StarIcon className="w-5 h-5 fill-yellow-500 text-yellow-500" />
+          <StarIcon className="w-5 h-5 fill-yellow-500 text-yellow-500" />
         </div>
       
       </div>
