@@ -19,6 +19,7 @@ export function formatDateTime(input,type) {
     const year = date.getFullYear();
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
+   
     if (type===0)
         return `${month} ${day}, ${year} at ${hours}:${minutes}`;
     if (type===1)
@@ -65,3 +66,25 @@ export function correctDate(date) {
         return formatDateTime(date,0);
     }
 }
+
+
+export function areDatesWithinXMinutes(date1, date2,minutes) {
+    const convertedMins = minutes * 60 * 1000; 
+    const time1 = new Date(date1).getTime();
+    const time2 = new Date(date2).getTime();
+    const difference = Math.abs(time1 - time2);
+    return difference <= convertedMins;
+  }
+
+  export function chooseColorForApp(status)
+  {
+    
+    switch(status)
+    {
+        case "Approved":return "green";
+        case "Waiting":return "yellow";
+        case "Completed":return "teal";
+        case "Reported":return "orange";
+        case "Rejected":return "red";
+    }
+  }

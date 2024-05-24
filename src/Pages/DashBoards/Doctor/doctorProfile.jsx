@@ -69,8 +69,8 @@ export default function DoctorProfile({ profile }) {
     <>
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
         <div className="flex items-center gap-4">
-          <Avatar className="h-16 w-16">
-            <AvatarImage src="elj" />
+          <Avatar className="h-[110px] w-[110px]">
+            <AvatarImage src={profile.picture} />
             <AvatarFallback>
               {profile.firstName[0] + profile.lastName[0]}
             </AvatarFallback>

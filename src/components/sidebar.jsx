@@ -22,7 +22,6 @@ export default function SideBar({ links }) {
   const sidebarRef = useRef();
   const { logOut, activeProfile } = useContext(userContext);
   const navigate = useNavigate();
-  
   const toggleSidebar = () => setIsOpen(!isOpen);
 
   const handleClickOutside = (event) => {
@@ -33,7 +32,7 @@ export default function SideBar({ links }) {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-    console.log(activeProfile);
+    
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -86,8 +85,8 @@ export default function SideBar({ links }) {
               className="flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-400 transition-colors hover:bg-[#3a3d6b] hover:text-gray-50"
               to="/dashboard/profile"
             >
-              <Avatar className="h-10 w-10 text-darkblue">
-                <AvatarImage src="elj" />
+              <Avatar className="h-12 w-12 text-darkblue">
+                <AvatarImage src={activeProfile.data.picture} />
                 {activeProfile.role === "Doctor" && (
                   <AvatarFallback>
                     {activeProfile.data.firstName[0] +

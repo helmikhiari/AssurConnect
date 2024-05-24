@@ -194,9 +194,12 @@ export async function getNextApppointment(token)
 {
     const response=await Get(API_BASE+'/doctor/getNextApp',token)
     if (response.status===200)
-    {   console.log(response)
+    {   
+        if (response.data!=false)
+        {
         response.data.nextApp.date=correctDate(response.data.nextApp.date);
         response.data.prevApp.date=stringToDateBar(response.data.prevApp.date);
+        }
         return response.data;
     }
     else
@@ -217,6 +220,64 @@ export async function getTodayAppointments(token)
     else
     {
         return null
+    }
+
+}
+
+export async function getNumberOfAppsNextWeek(token)
+{
+    const response=await Get(API_BASE+'/doctor/getStatsApps',token);
+    if (response.status===200)
+    {
+        return response.data
+    }
+    else
+    {
+        console.log(response.error);
+    }
+}
+
+
+export async function getCountAppsByStatus(token,status)
+{
+    if (status==="All")
+    {
+        const response=await Get(API_BASE+'/doctor/allAppointmentsCount',token)
+        if (response.status===200)
+            {
+                return response.data
+            }
+        else
+        {
+            console.log(response.error);
+        }
+    }
+    else
+    {
+        const response=await Get(API_BASE+'/doctor/allAppointmentsCount/'+status,token)
+       
+        if (response.status===200)
+            {
+                return response.data
+            }
+        else
+        {
+            console.log(response.error);
+        }
+    }
+    
+}
+
+export async function getAppsByStatus_Page(token,page,status)
+{
+    const response=await Get(API_BASE+'/doctor/appsbystatus_page?page='+page+'&status='+status,token);
+    if (response.status===200)
+        {
+            return response.data
+        }
+    else
+    {
+        console.log(response.error);
     }
 
 }

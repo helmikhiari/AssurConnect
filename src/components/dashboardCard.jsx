@@ -1,9 +1,13 @@
 import React from "react";
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton"
+
 export default function DashboardCard({ children, number, title, subNumber }) {
+  console.log(number);
   return (
+    
     <Card className="drop-shadow ">
-      <CardHeader className="flex flex-row items-center justify-between pb-2">
+        {number!="+undefined"?<><CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-md font-medium">{title}</CardTitle>
         {children}
       </CardHeader>
@@ -14,7 +18,15 @@ export default function DashboardCard({ children, number, title, subNumber }) {
             {subNumber}
           </p>
         )}
-      </CardContent>
+      </CardContent></>:
+        <div className="space-y-4 p-4">
+        
+        <Skeleton className="h-8 w-3/4" />
+        
+        <div className="flex justify-center">
+          <Skeleton className="h-6 w-1/2" />
+        </div>
+      </div>}
     </Card>
   );
 }

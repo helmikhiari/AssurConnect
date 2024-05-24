@@ -13,19 +13,22 @@ import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import DashboardCard from "../../../components/dashboardCard";
 import RatingCard from "../../../components/ratingCard";
 import prescriptionImg from "../../../assets/icons/prescription.png";
-import imgPatient from "../../../assets/images/Vector1.png";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { CalendarIcon, UsersIcon } from "../../../assets/icons/icons";
 import { useEffect, useState } from "react";
 import {
   getNextApppointment,
+  getNumberOfAppsNextWeek,
   getTodayAppointments,
 } from "../../../assets/Apis/assets";
 
-import { formatDateTime } from "../../../assets/functions";
+import { areDatesWithinXMinutes, formatDateTime } from "../../../assets/functions";
+import noAppsImg from '../../../assets/images/noAppsAvailable.jpg'
+import { classNames } from 'classnames';
 export default function DoctorDashboard() {
   const [nextAppWindowInfo, setNextAppWindowInfo] = useState();
   const [todayAppointments, setTodayAppointments] = useState();
+  const [nextWeekAppsNumber,setNextWeekAppsNumber]=useState()
   const [prescriptionVisibility, setPrescriptionVisibility] = useState(false);
   const tooglePrescriptionVisibility = () =>
     setPrescriptionVisibility((prev) => !prev);
@@ -34,9 +37,9 @@ export default function DoctorDashboard() {
   useEffect(() => {
     const getNextApp = async () => {
       const response = await getNextApppointment(token);
-      if (response) {
+     
         setNextAppWindowInfo(response);
-      }
+      
     };
     getNextApp();
   }, []);
@@ -44,22 +47,57 @@ export default function DoctorDashboard() {
   useEffect(() => {
     const getTodayApps = async () => {
       const response = await getTodayAppointments(token);
-      console.log(response)
       if (response!==null) {
-        
+        console.log(response)
         setTodayAppointments(response);
       }
     };
     getTodayApps();
   }, []);
 
-  const Patient = ({ firstName, lastName, picture, date }) => {
+  useEffect(()=>
+  {
+    const getNumberApps=async()=>
+    {
+      const response=await getNumberOfAppsNextWeek(token);
+      
+      
+        setNextWeekAppsNumber(response);
+      
+    }
+    getNumberApps();
+  })
+
+  const Patient = ({ firstName, lastName, picture, date ,status}) => {
+
     const formattedDate = formatDateTime(date, 2);
+    const appDate=new Date(date);
+    const now=new Date(Date.now());
+    let color;
+    
+    const a=areDatesWithinXMinutes(date,now,15);
+    if (appDate.getTime()<now.getTime()&&a&&status!="Completed")
+      {
+        color="rgb(250 204 21)";
+      }
+    else if(appDate.getTime()<now.getTime()&&status!="Completed")
+      {
+        color="rgb(248 113 113)";
+      }
+      else if (status==="Completed")
+      {
+        color="rgb(74 222 128)"
+      }
+      else
+      { 
+        color="white"
+      }
+     
     return (
       <>
-        <div className="grid grid-cols-2 items-center px-5 py-3  hover:bg-yellow-100 rounded transition duration-500">
-          <div className="flex flex-row items-center gap-4">
-            <Avatar className="h-14 w-14 text-darkblue">
+        <div  style={{backgroundColor:color}}className={`grid grid-cols-6 items-center px-5 py-3  rounded transition duration-500`}>
+          <div className="col-span-3 gap-4 flex flex-row   items-center	">
+            <Avatar className=" h-14 w-14 text-darkblue">
               <AvatarImage src={picture} />
               <AvatarFallback className="uppercase">
                 {firstName[0]}
@@ -70,7 +108,8 @@ export default function DoctorDashboard() {
               {firstName} {lastName}
             </p>
           </div>
-          <p>{formattedDate}</p>
+          <p className="col-span-2">{formattedDate}</p>
+          {color=="rgb(250 204 21)"&&<Button className="col-span-1 ">Start Now</Button>}
         </div>
         <Separator />
       </>
@@ -156,7 +195,7 @@ export default function DoctorDashboard() {
             </CardTitle>
             <CalendarIcon className="w-4 h-4 text-darkblue " />
           </CardHeader>
-          <CardContent>
+          {nextAppWindowInfo!==false?<CardContent>
             <div className="text-sm font-medium text-gray-900 text-left">
               {nextAppWindowInfo?.nextApp.date}
             </div>
@@ -211,7 +250,24 @@ export default function DoctorDashboard() {
             >
               Start Appointment
             </Button>
-          </CardContent>
+          </CardContent>:
+          <div className="flex flex-col justify-center items-center ">
+             <img
+                  alt="No Appointments Available "
+                  
+                  height="250"
+                  src={noAppsImg}
+                  // style={{
+                  //   aspectRatio: "32/32",
+                  //   objectFit: "cover",
+                  // }}
+                  width="250"
+                />
+          <p className="text-[14px] font-medium text-left text-darkblue flex flex-wrap justify-center text-center pb-10 pt-5">
+          Currently, there are no upcoming appointments scheduled. Please check back later or manage your schedule as needed.
+        </p>
+       
+        </div>}
         </Card>
       </div>
     );
@@ -234,11 +290,12 @@ export default function DoctorDashboard() {
           {todayAppointments !== false
             ? todayAppointments?.map((patient,index) => (
                 <Patient
-                key={index}
+                  key={index}
                   picture={patient.patientPicture}
                   date={patient.date}
                   firstName={patient.patientFirstName}
                   lastName={patient.patientLastName}
+                  status={patient.status}
                 />
               ))
             : "No Appointments for today"}
@@ -261,12 +318,14 @@ export default function DoctorDashboard() {
 
           <DashboardCard
             title="Upcoming Appointments"
-            number="+12"
+            number={`+${nextWeekAppsNumber}`}
             subNumber="in the next 7 days"
           >
             <CalendarIcon className="w-4 h-4 text-darkblue" />
           </DashboardCard>
           <RatingCard title="Reviews" rating="4.8" numberOfReviews="1,225" />
+          
+          
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
