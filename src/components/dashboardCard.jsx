@@ -3,7 +3,7 @@ import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton"
 
 export default function DashboardCard({ children, number, title, subNumber }) {
-  console.log(number);
+
   return (
     
     <Card className="drop-shadow ">

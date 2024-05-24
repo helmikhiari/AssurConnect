@@ -1,13 +1,5 @@
 import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import {
-  TableHead,
-  TableRow,
-  TableHeader,
-  TableCell,
-  TableBody,
-  Table,
-} from "@/components/ui/table";
 import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogContent } from "@/components/ui/alert-dialog";
 import DashboardCard from "../../../components/dashboardCard";
@@ -21,25 +13,30 @@ import {
   getNumberOfAppsNextWeek,
   getTodayAppointments,
 } from "../../../assets/Apis/assets";
-
-import { areDatesWithinXMinutes, formatDateTime } from "../../../assets/functions";
-import noAppsImg from '../../../assets/images/noAppsAvailable.jpg'
-import { classNames } from 'classnames';
+import {
+  areDatesWithinXMinutes,
+  formatDateTime,
+} from "../../../assets/functions";
+import noAppsImg from "../../../assets/images/noAppsAvailable.jpg";
+import { useNavigate } from "react-router-dom";
 export default function DoctorDashboard() {
   const [nextAppWindowInfo, setNextAppWindowInfo] = useState();
   const [todayAppointments, setTodayAppointments] = useState();
-  const [nextWeekAppsNumber,setNextWeekAppsNumber]=useState()
+  const [nextWeekAppsNumber, setNextWeekAppsNumber] = useState();
   const [prescriptionVisibility, setPrescriptionVisibility] = useState(false);
+  const token = localStorage.getItem("token");
+  const navigate=useNavigate();
+
+  const startApp=()=>navigate('/dashboard/startApp',{state:nextAppWindowInfo});
+
   const tooglePrescriptionVisibility = () =>
     setPrescriptionVisibility((prev) => !prev);
-  const token = localStorage.getItem("token");
 
   useEffect(() => {
     const getNextApp = async () => {
       const response = await getNextApppointment(token);
-     
-        setNextAppWindowInfo(response);
-      
+
+      setNextAppWindowInfo(response);
     };
     getNextApp();
   }, []);
@@ -47,55 +44,46 @@ export default function DoctorDashboard() {
   useEffect(() => {
     const getTodayApps = async () => {
       const response = await getTodayAppointments(token);
-      if (response!==null) {
-        console.log(response)
+      if (response !== null) {
+        
         setTodayAppointments(response);
       }
     };
     getTodayApps();
   }, []);
 
-  useEffect(()=>
-  {
-    const getNumberApps=async()=>
-    {
-      const response=await getNumberOfAppsNextWeek(token);
-      
-      
-        setNextWeekAppsNumber(response);
-      
-    }
+  useEffect(() => {
+    const getNumberApps = async () => {
+      const response = await getNumberOfAppsNextWeek(token);
+
+      setNextWeekAppsNumber(response);
+    };
     getNumberApps();
-  })
+  });
 
-  const Patient = ({ firstName, lastName, picture, date ,status}) => {
-
+  const Patient = ({ firstName, lastName, picture, date, status }) => {
     const formattedDate = formatDateTime(date, 2);
-    const appDate=new Date(date);
-    const now=new Date(Date.now());
+    const appDate = new Date(date);
+    const now = new Date(Date.now());
     let color;
-    
-    const a=areDatesWithinXMinutes(date,now,15);
-    if (appDate.getTime()<now.getTime()&&a&&status!="Completed")
-      {
-        color="rgb(250 204 21)";
-      }
-    else if(appDate.getTime()<now.getTime()&&status!="Completed")
-      {
-        color="rgb(248 113 113)";
-      }
-      else if (status==="Completed")
-      {
-        color="rgb(74 222 128)"
-      }
-      else
-      { 
-        color="white"
-      }
-     
+
+    const a = areDatesWithinXMinutes(date, now, 15);
+    if (appDate.getTime() < now.getTime() && a && status != "Completed") {
+      color = "rgb(250 204 21)";
+    } else if (appDate.getTime() < now.getTime() && status != "Completed") {
+      color = "rgb(248 113 113)";
+    } else if (status === "Completed") {
+      color = "rgb(74 222 128)";
+    } else {
+      color = "white";
+    }
+
     return (
       <>
-        <div  style={{backgroundColor:color}}className={`grid grid-cols-6 items-center px-5 py-3  rounded transition duration-500`}>
+        <div
+          style={{ backgroundColor: color }}
+          className={`grid grid-cols-6 items-center px-5 py-3  rounded transition duration-500`}
+        >
           <div className="col-span-3 gap-4 flex flex-row   items-center	">
             <Avatar className=" h-14 w-14 text-darkblue">
               <AvatarImage src={picture} />
@@ -109,7 +97,9 @@ export default function DoctorDashboard() {
             </p>
           </div>
           <p className="col-span-2">{formattedDate}</p>
-          {color=="rgb(250 204 21)"&&<Button className="col-span-1 ">Start Now</Button>}
+          {color == "rgb(250 204 21)" && (
+            <Button className="col-span-1 ">Start Now</Button>
+          )}
         </div>
         <Separator />
       </>
@@ -195,79 +185,84 @@ export default function DoctorDashboard() {
             </CardTitle>
             <CalendarIcon className="w-4 h-4 text-darkblue " />
           </CardHeader>
-          {nextAppWindowInfo!==false?<CardContent>
-            <div className="text-sm font-medium text-gray-900 text-left">
-              {nextAppWindowInfo?.nextApp.date}
-            </div>
-            <div className="flex flex-row gap-5 pt-5">
-              <Avatar className="h-14 w-14 text-darkblue">
-                <AvatarImage src={nextAppWindowInfo?.nextApp.patientPicture} />
-                <AvatarFallback className="uppercase">
-                  {nextAppWindowInfo?.nextApp.patientFirstName[0]}
-                  {nextAppWindowInfo?.nextApp.patientLastName[0]}
-                </AvatarFallback>
-              </Avatar>
-              <div className="font-medium flex justify-center items-center capitalize">
-                {nextAppWindowInfo?.nextApp.patientFirstName}{" "}
-                {nextAppWindowInfo?.nextApp.patientLastName}
+          {nextAppWindowInfo !== false ? (
+            <CardContent>
+              <div className="text-sm font-medium text-gray-900 text-left">
+                {nextAppWindowInfo?.nextApp.date}
               </div>
-            </div>
-            <div className="mt-4 py-2 px-1 rounded-lg shadow-md flex  flex-col">
-              <p className="text-[14px] font-medium text-left text-black">
-                Last Appointment: {nextAppWindowInfo?.prevApp.date}
-              </p>
-              <div className="flex flex-row gap-3 pt-3">
-                <p className="text-[13px] font-medium text-left text-black">
-                  Prescription
+              <div className="flex flex-row gap-5 pt-5">
+                <Avatar className="h-14 w-14 text-darkblue">
+                  <AvatarImage
+                    src={nextAppWindowInfo?.nextApp.patientPicture}
+                  />
+                  <AvatarFallback className="uppercase">
+                    {nextAppWindowInfo?.nextApp.patientFirstName[0]}
+                    {nextAppWindowInfo?.nextApp.patientLastName[0]}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="font-medium flex justify-center items-center capitalize">
+                  {nextAppWindowInfo?.nextApp.patientFirstName}{" "}
+                  {nextAppWindowInfo?.nextApp.patientLastName}
+                </div>
+              </div>
+              <div className="mt-4 py-2 px-1 rounded-lg shadow-md flex  flex-col">
+                <p className="text-[14px] font-medium text-left text-black">
+                  Last Appointment: {nextAppWindowInfo?.prevApp.date}
                 </p>
+                <div className="flex flex-row gap-3 pt-3">
+                  <p className="text-[13px] font-medium text-left text-black">
+                    Prescription
+                  </p>
 
-                <img
-                  alt="prescription picture"
-                  onClick={tooglePrescriptionVisibility}
-                  className="cursor-pointer hover:w-[26px] hover:h-[26px]"
-                  height="24"
-                  src={prescriptionImg}
-                  style={{
-                    aspectRatio: "32/32",
-                    objectFit: "cover",
-                  }}
-                  width="24"
-                />
+                  <img
+                    alt="prescription picture"
+                    onClick={tooglePrescriptionVisibility}
+                    className="cursor-pointer hover:w-[26px] hover:h-[26px]"
+                    height="24"
+                    src={prescriptionImg}
+                    style={{
+                      aspectRatio: "32/32",
+                      objectFit: "cover",
+                    }}
+                    width="24"
+                  />
+                </div>
+                <p className="text-[13px] font-medium text-left text-black">
+                  Notes
+                </p>
+                <p className="text-left text-sm">
+                  {!nextAppWindowInfo?.prevApp.details
+                    ? nextAppWindowInfo?.prevApp.details
+                    : "No details available for the last appointment."}
+                </p>
+                {/* function splitText into phrases  */}
               </div>
-              <p className="text-[13px] font-medium text-left text-black">
-                Notes
+              <Button
+                className="ml-auto shadow hover:drop-shadow mt-5"
+                variant="primary"
+                onClick={startApp}
+              >
+                Start Appointment
+              </Button>
+            </CardContent>
+          ) : (
+            <div className="flex flex-col justify-center items-center ">
+              <img
+                alt="No Appointments Available "
+                height="250"
+                src={noAppsImg}
+                // style={{
+                //   aspectRatio: "32/32",
+                //   objectFit: "cover",
+                // }}
+                width="250"
+              />
+              <p className="text-[14px] font-medium text-left text-darkblue flex flex-wrap justify-center text-center pb-10 pt-5">
+                Currently, there are no upcoming appointments scheduled. Please
+                check back later or manage your schedule as needed.
               </p>
-              <p className="text-left text-sm">
-                {!nextAppWindowInfo?.prevApp.details
-                  ? nextAppWindowInfo?.prevApp.details
-                  : "No details available for the last appointment."}
-              </p>
-              {/* function splitText into phrases  */}
             </div>
-            <Button
-              className="ml-auto shadow hover:drop-shadow mt-5"
-              variant="primary"
-            >
-              Start Appointment
-            </Button>
-          </CardContent>:
-          <div className="flex flex-col justify-center items-center ">
-             <img
-                  alt="No Appointments Available "
-                  
-                  height="250"
-                  src={noAppsImg}
-                  // style={{
-                  //   aspectRatio: "32/32",
-                  //   objectFit: "cover",
-                  // }}
-                  width="250"
-                />
-          <p className="text-[14px] font-medium text-left text-darkblue flex flex-wrap justify-center text-center pb-10 pt-5">
-          Currently, there are no upcoming appointments scheduled. Please check back later or manage your schedule as needed.
-        </p>
-       
-        </div>}
+          )}
         </Card>
       </div>
     );
@@ -288,7 +283,7 @@ export default function DoctorDashboard() {
         </CardHeader>
         <CardContent className="mt-2">
           {todayAppointments !== false
-            ? todayAppointments?.map((patient,index) => (
+            ? todayAppointments?.map((patient, index) => (
                 <Patient
                   key={index}
                   picture={patient.patientPicture}
@@ -324,8 +319,6 @@ export default function DoctorDashboard() {
             <CalendarIcon className="w-4 h-4 text-darkblue" />
           </DashboardCard>
           <RatingCard title="Reviews" rating="4.8" numberOfReviews="1,225" />
-          
-          
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -336,105 +329,6 @@ export default function DoctorDashboard() {
           open={prescriptionVisibility}
           onClick={tooglePrescriptionVisibility}
         />
-
-        {/* <Card className="mt-6 drop-shadow">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Patient</TableHead>
-                <TableHead>Appointment</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead>Status</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Patient Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src={prescriptionImg}
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <div>
-                      <div className="font-medium">John Doe</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        #12345
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>Checkup</TableCell>
-                <TableCell>May 22, 2023</TableCell>
-                <TableCell>
-                  <Badge variant="success">Confirmed</Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Patient Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="/placeholder.svg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <div>
-                      <div className="font-medium">Jane Smith</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        #54321
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>Surgery Consultation</TableCell>
-                <TableCell>June 1, 2023</TableCell>
-                <TableCell>
-                  <Badge variant="warning">Pending</Badge>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <img
-                      alt="Patient Avatar"
-                      className="rounded-full"
-                      height="32"
-                      src="/placeholder.svg"
-                      style={{
-                        aspectRatio: "32/32",
-                        objectFit: "cover",
-                      }}
-                      width="32"
-                    />
-                    <div>
-                      <div className="font-medium">Michael Johnson</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        #98765
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>Routine Checkup</TableCell>
-                <TableCell>June 15, 2023</TableCell>
-                <TableCell>
-                  <Badge variant="success">Confirmed</Badge>
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </Card> */}
       </div>
     </div>
   );

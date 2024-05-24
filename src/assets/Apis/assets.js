@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import {API_BASE} from '../../../env.js'
 import { Get, Patch, Post } from '../requests';
 import { correctDate, formatDateTime, stringToDateBar } from '../functions.js';
+import Appointments from './../../Pages/DashBoards/Doctor/appointments';
 export async function signUp(data,accountType)
 {
     let path=API_BASE;
@@ -280,4 +281,21 @@ export async function getAppsByStatus_Page(token,page,status)
         console.log(response.error);
     }
 
+}
+
+
+export async function changeAppointmentStatus(token,appId,status)
+
+ {   
+    status=status.toLowerCase()
+    
+    const response =await Patch(API_BASE+"/doctor/"+status+"App?appId="+appId,null,token);
+    if (response.status===200)
+    {
+        return true
+    }
+    else
+    {
+        console.log(response.error);
+    }
 }

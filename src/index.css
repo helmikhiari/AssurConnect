@@ -100,3 +100,6 @@
 ::-webkit-scrollbar-track {
   background-color: #ffffff; /* Color of the scrollbar track */
 }
+.bg-black\/80 {
+  background-color: rgb(0 0 0 / 0.2);
+}

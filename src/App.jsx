@@ -16,6 +16,7 @@ import ForgetPassword from "./Pages/Auth/forgetPassword.jsx";
 import Appointments from "./Pages/DashBoards/Doctor/appointments.jsx";
 import Unauthorized from "./Pages/unauthorized.jsx";
 import ProtectedRoute from "./components/protectedRoute.jsx";
+import MakeApp from "./Pages/DashBoards/Doctor/makeApp.jsx";
 
 export default function App() {
   const { loadMe, setActiveProfile, activeProfile } = useContext(userContext);
@@ -83,6 +84,14 @@ export default function App() {
           element: (
             <ProtectedRoute allowedRole="Doctor" role={activeProfile?.role}>
               <Appointments  />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path:"/dashboard/startApp",
+          element:(
+            <ProtectedRoute allowedRole="Doctor" role={activeProfile?.role}>
+              <MakeApp />
             </ProtectedRoute>
           ),
         },

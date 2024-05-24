@@ -7,76 +7,62 @@ import {
   TableCell,
   TableBody,
   Table,
-  TableFooter,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { CardTitle, CardHeader, CardContent, Card } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
-  PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { Button } from "@/components/ui/button";
 import {
-  DialogTrigger,
-  DialogTitle,
-  DialogHeader,
-  DialogFooter,
-  DialogContent,
-  Dialog,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  changeAppointmentStatus,
   getAppsByStatus_Page,
   getCountAppsByStatus,
 } from "../../../assets/Apis/assets";
-
 import CustomLoading from "../../../components/customLoading";
 import { chooseColorForApp, formatDateTime } from "../../../assets/functions";
+import Modal from "../../../components/modal";
 
 export default function Appointments() {
   const [activeTab, setActiveTab] = useState("All");
-  const [data, setData] = useState();
+  const [data, setData] = useState([]);
   const [activeTabcountApps, setActiveTabCountApps] = useState();
   const [loadingCount, setLoadingCount] = useState(true);
   const [currentPage, setCurrentPage] = useState(0);
-  const [DialogType1, setDialogType1] = useState(false);
+  const [dialogType1, setDialogType1] = useState(false);
+  const [dialogType1Title, setDialogType1Title] = useState();
+  const [currentIndex, setCurrentIndex] = useState();
   const token = localStorage.getItem("token");
 
   const toogleDialogType1 = () => setDialogType1((prev) => !prev);
   const onTabChange = (value) => setActiveTab(value);
   const handlePrev = () => setCurrentPage((prev) => prev - 1);
   const handleNext = () => setCurrentPage((prev) => prev + 1);
-
-  const getDropDownData = (status) => {
-    let data = {};
-    if (status === "Approved") {
-      data.title1 = "Report";
-      data.title2 = "Cancel";
-    } else {
-      data.title1 = "Approve";
-      data.title2 = "Reject";
-    }
-    return data;
-  };
-
+  
+  const reload = () => window.location.reload();
+ 
   const fetchApps = async () => {
     const response = await getAppsByStatus_Page(token, currentPage, activeTab);
     setData(response);
-    console.log(response);
-  };
+  }
 
   useEffect(() => {
     const fetchAppsCount = async () => {
@@ -93,85 +79,124 @@ export default function Appointments() {
     fetchApps();
   }, [currentPage, activeTab]);
 
-  const AproveRejectCancelApp = ({
-    button1Title,
-    button2Title,
-    children,
-    index,
-    open,
-  }) => {
-    const formattedDate = formatDateTime(date, 1);
-    const time = formatDateTime(date, 2);
-    let onClick2;
-    let onClick1;
-    if (data[index].status === "Approved") {
-      onClick1 = approveApp;
-      onClick2 = rejectApp;
-    }
+  const AproveRejectCancelApp = ({ open }) => {
+    const [success, setSuccess] = useState(false);
+    const formattedDate = formatDateTime(data[currentIndex]?.date, 1);
+    const time = formatDateTime(data[currentIndex]?.date, 2);
+    const changeStatus = async () => {
+      const response = await changeAppointmentStatus(
+        token,
+        data[currentIndex]?.id,
+        dialogType1Title
+      );
+      if (response) {
+        setSuccess(true);
+      }
+    };
     return (
-      <Dialog open={open}>
-        <DialogTrigger asChild>{children}</DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>{title} Appointment</DialogTitle>
-          </DialogHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">Date</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {formattedDate}
+      <AlertDialog open={open}>
+        {!success ? (
+          <AlertDialogContent className="sm:max-w-[425px]">
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {dialogType1Title} Appointment
+              </AlertDialogTitle>
+            </AlertDialogHeader>
+            <AlertDialogDescription className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium">Date</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {formattedDate}
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">Time</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {time}
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium">Time</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {time}
+                </div>
               </div>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="text-sm font-medium">Patient</div>
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                {firstName} {lastName}
+              <div className="flex items-center justify-between">
+                <div className="text-sm font-medium">Patient</div>
+                <div className="text-sm text-gray-500 dark:text-gray-400 capitalize">
+                  {data[currentIndex]?.patientFirstName}{" "}
+                  {data[currentIndex]?.patientLastName}
+                </div>
               </div>
-            </div>
-          </CardContent>
-          <DialogFooter className="mt-4 flex justify-between">
-            <Button variant="secondary" onClick={onClick1}>
-              {button1Title}
-            </Button>
-            <Button onClick={onClick2}>{button2Title}</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+            </AlertDialogDescription>
+            <AlertDialogFooter className="mt-4 flex justify-between">
+              <Button variant="secondary" onClick={toogleDialogType1}>
+                Cancel
+              </Button>
+              <Button onClick={changeStatus}>Confirm</Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        ) : (
+          <AlertDialogContent>
+            <Modal
+              title={"Appointment " + dialogType1Title + "ed with Success"}
+              buttonTitle="Close"
+              onClick={reload}
+            />
+          </AlertDialogContent>
+        )}
+      </AlertDialog>
     );
   };
 
-  const DropDown = ({ children, title1, title2, title3, index }) => {
+  const DropDownApproved = ({ children, index }) => {
     return (
       <DropdownMenu>
         <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
         <DropdownMenuContent>
-          <AproveRejectCancelApp index={index}>
-            <DropdownMenuItem
-              className="cursor-pointer flex justify-center"
-              onClick={onClick1}
-            >
-              {title1}
-            </DropdownMenuItem>
-          </AproveRejectCancelApp>
-          <AproveRejectCancelApp index={index}>
-            <DropdownMenuItem
-              className="cursor-pointer flex justify-center"
-              onClick={onClick2}
-            >
-              {title2}
-            </DropdownMenuItem>
-          </AproveRejectCancelApp>
+          <DropdownMenuItem
+            className="cursor-pointer flex justify-center"
+            onClick={() => console.log("clicked")}
+          >
+            Report
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            className="cursor-pointer flex justify-center"
+            onClick={() => {
+              setDialogType1Title("Cancel");
+              toogleDialogType1();
+            }}
+          >
+            Cancel
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     );
   };
 
+  const DropDownWaiting = ({ children }) => {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger>{children}</DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <DropdownMenuItem
+            className="cursor-pointer flex justify-center"
+            onClick={() => {
+              setDialogType1Title("Approve");
+              toogleDialogType1();
+            }}
+          >
+            Approve
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
+            className="cursor-pointer flex justify-center"
+            onClick={() => {
+              setDialogType1Title("Reject");
+              toogleDialogType1();
+            }}
+          >
+            Reject
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  };
   return (
     <div className="flex flex-col justify-center items-center space-y-3">
       <Tabs
@@ -216,6 +241,12 @@ export default function Appointments() {
           >
             Completed
           </TabsTrigger>
+          <TabsTrigger
+            value="Cancelled"
+            className="data-[state=active]:text-red-500"
+          >
+            Cancelled
+          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -236,12 +267,12 @@ export default function Appointments() {
           </TableHeader>
           <TableBody>
             {data?.map((app, index) => {
-              const d = formatDateTime(app?.date, 0);
+              const d = formatDateTime(app.date, 0);
               const color = chooseColorForApp(app.status);
               const textColor = app.status == "Waiting" ? "black" : "white";
               const dropdownvisibility =
                 app.status === "Approved" || app.status === "Waiting";
-              const dropDownData = getDropDownData(app.status);
+
               return (
                 <TableRow className="grid grid-cols-3 px-10" key={app.id}>
                   <TableCell>
@@ -266,18 +297,33 @@ export default function Appointments() {
                   </TableCell>
                   <TableCell className="flex justify-end items-center w-auto">
                     {dropdownvisibility ? (
-                      <DropDown
-                        index={index}
-                        title1={dropDownData.title1}
-                        title2={dropDownData.title2}
-                        title3={dropDownData.title3}
-                      >
-                        <Badge
-                          style={{ backgroundColor: color, color: textColor }}
-                        >
-                          {app.status} <p className="pl-2">▼</p>
-                        </Badge>
-                      </DropDown>
+                      data[index].status === "Approved" ? (
+                        <div onClick={() => setCurrentIndex(index)}>
+                          <DropDownApproved>
+                            <Badge
+                              style={{
+                                backgroundColor: color,
+                                color: textColor,
+                              }}
+                            >
+                              {app.status} <p className="pl-2">▼</p>
+                            </Badge>
+                          </DropDownApproved>
+                        </div>
+                      ) : (
+                        <div onClick={() => setCurrentIndex(index)}>
+                          <DropDownWaiting>
+                            <Badge
+                              style={{
+                                backgroundColor: color,
+                                color: textColor,
+                              }}
+                            >
+                              {app.status} <p className="pl-2">▼</p>
+                            </Badge>
+                          </DropDownWaiting>
+                        </div>
+                      )
                     ) : (
                       <Badge
                         style={{ backgroundColor: color, color: textColor }}
@@ -291,7 +337,7 @@ export default function Appointments() {
             })}
           </TableBody>
         </Table>
-
+        <AproveRejectCancelApp open={dialogType1} />
         <div className="cursor-pointer ">
           <PaginationContent className="flex justify-between px-[80px] bg-gray-200  rounded-bl-[25px] rounded-br-[25px]">
             <p className="flex justify-self-end cursor-default font-sm text-sm text-right">

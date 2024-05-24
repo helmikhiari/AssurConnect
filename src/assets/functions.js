@@ -86,5 +86,6 @@ export function areDatesWithinXMinutes(date1, date2,minutes) {
         case "Completed":return "teal";
         case "Reported":return "orange";
         case "Rejected":return "red";
+        case "Cancelled":return "red";
     }
   }
