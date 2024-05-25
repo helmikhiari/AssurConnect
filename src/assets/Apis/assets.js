@@ -299,3 +299,31 @@ export async function changeAppointmentStatus(token,appId,status)
         console.log(response.error);
     }
 }
+
+export async function sendPatientOtp(token,appId)
+{
+    const response=await Post(API_BASE+'/doctor/sendPatientOtp',{appId:appId},token)
+}
+
+export async function makeApp(token,appId,otp,notes,medicines)
+{
+    const dataToSend={
+        appId:appId,
+        otp:otp,
+        details:notes,
+        medicines:medicines
+    }
+    const response=await Post(API_BASE+'/doctor/makeApp',dataToSend,token);
+    if (response.status===201)
+        {
+            return true;
+        }
+    else if (response.status===400)
+        {
+            return false;
+        }
+    else
+    {
+        console.log(response.error);
+    }
+}

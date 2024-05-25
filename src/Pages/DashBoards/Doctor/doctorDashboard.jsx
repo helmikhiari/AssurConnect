@@ -12,6 +12,7 @@ import {
   getNextApppointment,
   getNumberOfAppsNextWeek,
   getTodayAppointments,
+  sendPatientOtp,
 } from "../../../assets/Apis/assets";
 import {
   areDatesWithinXMinutes,
@@ -25,9 +26,12 @@ export default function DoctorDashboard() {
   const [nextWeekAppsNumber, setNextWeekAppsNumber] = useState();
   const [prescriptionVisibility, setPrescriptionVisibility] = useState(false);
   const token = localStorage.getItem("token");
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
-  const startApp=()=>navigate('/dashboard/startApp',{state:nextAppWindowInfo});
+  const startApp = (appData) => {
+    sendPatientOtp(token, appData._id);
+    navigate("/dashboard/startApp", { state: appData });
+  };
 
   const tooglePrescriptionVisibility = () =>
     setPrescriptionVisibility((prev) => !prev);
@@ -35,7 +39,7 @@ export default function DoctorDashboard() {
   useEffect(() => {
     const getNextApp = async () => {
       const response = await getNextApppointment(token);
-
+      console.log(response);
       setNextAppWindowInfo(response);
     };
     getNextApp();
@@ -45,7 +49,6 @@ export default function DoctorDashboard() {
     const getTodayApps = async () => {
       const response = await getTodayAppointments(token);
       if (response !== null) {
-        
         setTodayAppointments(response);
       }
     };
@@ -61,13 +64,12 @@ export default function DoctorDashboard() {
     getNumberApps();
   });
 
-  const Patient = ({ firstName, lastName, picture, date, status }) => {
+  const Patient = ({ firstName, lastName, picture, date, status, onClick }) => {
     const formattedDate = formatDateTime(date, 2);
     const appDate = new Date(date);
     const now = new Date(Date.now());
     let color;
-
-    const a = areDatesWithinXMinutes(date, now, 15);
+    const a = areDatesWithinXMinutes(date, now, 15); ///if more than 15 late ,i will be cancelled ,the doctor can choose this interval
     if (appDate.getTime() < now.getTime() && a && status != "Completed") {
       color = "rgb(250 204 21)";
     } else if (appDate.getTime() < now.getTime() && status != "Completed") {
@@ -98,7 +100,9 @@ export default function DoctorDashboard() {
           </div>
           <p className="col-span-2">{formattedDate}</p>
           {color == "rgb(250 204 21)" && (
-            <Button className="col-span-1 ">Start Now</Button>
+            <Button className="col-span-1 " onClick={onClick}>
+              Start Now
+            </Button>
           )}
         </div>
         <Separator />
@@ -107,21 +111,22 @@ export default function DoctorDashboard() {
   };
 
   const Prescription = ({ open, onClick }) => {
-    return (
+    if (nextAppWindowInfo!==false&&nextAppWindowInfo!=undefined) 
+      return (
       <AlertDialog open={open}>
         <AlertDialogContent className="bg-white rounded-lg shadow-lg p-8 w-full mx-auto  overflow-y-auto max-h-screen">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Medical Prescription</h1>
             <div className="bg-gray-100 px-4 py-2 rounded-full text-sm font-medium text-gray-600">
-              Prescription #123456
+              Prescription #{nextAppWindowInfo?.presId}
             </div>
           </div>
           <div className="grid grid-cols-1 gap-8">
             <div>
               <h2 className="text-lg font-medium mb-2">Patient Information</h2>
               <div className="text-gray-600">
-                <p>Name: John Doe</p>
-                <p>Date of Birth: 01/01/1980</p>
+                <p className="capitalize">Name: {nextAppWindowInfo?.nextApp.patientFirstName}{' '} {nextAppWindowInfo?.nextApp.patientLastName}</p>
+                {/* <p>Date of Birth: 01/01/1980</p> */}
               </div>
             </div>
           </div>
@@ -129,39 +134,19 @@ export default function DoctorDashboard() {
           <div>
             <h2 className="text-lg font-medium mb-2">Prescribed Medications</h2>
             <div className="space-y-4">
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-800 font-medium">Amoxicillin</h3>
-                  <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
-                    500mg
+              {nextAppWindowInfo?.prescription?.map((med) => {
+                return (
+                  <div className="bg-gray-100 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-gray-800 font-medium">{med?.name}</h3>
+                      <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
+                        {med?.dosage}
+                      </div>
+                    </div>
+                    <p className="text-gray-600 text-sm">{med?.instruction}</p>
                   </div>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  Take 1 capsule every 8 hours for 10 days.
-                </p>
-              </div>
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-800 font-medium">Ibuprofen</h3>
-                  <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
-                    200mg
-                  </div>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  Take 1 tablet every 6 hours as needed for pain.
-                </p>
-              </div>
-              <div className="bg-gray-100 p-4 rounded-lg">
-                <div className="flex items-center justify-between mb-2">
-                  <h3 className="text-gray-800 font-medium">Zyrtec</h3>
-                  <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
-                    10mg
-                  </div>
-                </div>
-                <p className="text-gray-600 text-sm">
-                  Take 1 tablet daily for allergy relief.
-                </p>
-              </div>
+                );
+              })}
             </div>
             <Button
               onClick={onClick}
@@ -240,7 +225,7 @@ export default function DoctorDashboard() {
               <Button
                 className="ml-auto shadow hover:drop-shadow mt-5"
                 variant="primary"
-                onClick={startApp}
+                onClick={() => startApp(nextAppWindowInfo?.nextApp)}
               >
                 Start Appointment
               </Button>
@@ -251,10 +236,6 @@ export default function DoctorDashboard() {
                 alt="No Appointments Available "
                 height="250"
                 src={noAppsImg}
-                // style={{
-                //   aspectRatio: "32/32",
-                //   objectFit: "cover",
-                // }}
                 width="250"
               />
               <p className="text-[14px] font-medium text-left text-darkblue flex flex-wrap justify-center text-center pb-10 pt-5">
@@ -291,6 +272,7 @@ export default function DoctorDashboard() {
                   firstName={patient.patientFirstName}
                   lastName={patient.patientLastName}
                   status={patient.status}
+                  onClick={() => startApp(patient)}
                 />
               ))
             : "No Appointments for today"}
