@@ -41,7 +41,12 @@ export async function signUp(data,accountType)
     }
     
     const response=await Post(path,dataToSend);
-    return response
+    if (response.status===201)
+    return response.data
+else
+{
+    console.log(response.error);
+}
 }
 
 
@@ -325,5 +330,25 @@ export async function makeApp(token,appId,otp,notes,medicines)
     else
     {
         console.log(response.error);
+    }
+}
+
+
+export async function getPrescription(presID,token)
+{   presID=presID.slice(1);
+    
+    const response=await Get(API_BASE+"/pharmacy/getPrescription/"+presID,token);
+    
+    if (response.status===200)
+    {
+        return {data:response.data};
+    }
+    else if (response.status===404)
+        return {error:"Please provide a valid prescription Identifier"};
+    else if (response.status===400)
+        return {error:"Prescription Has Been Served Already"};
+    else 
+    {
+        return {error:"Error Occured"};
     }
 }

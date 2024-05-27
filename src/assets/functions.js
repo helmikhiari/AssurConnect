@@ -89,3 +89,9 @@ export function areDatesWithinXMinutes(date1, date2,minutes) {
         case "Cancelled":return "red";
     }
   }
+
+
+
+ export  function isPositiveInteger(str) {
+    return /^[1-9]\d*$/.test(str);
+  }

@@ -6,13 +6,12 @@ import { Button } from "@/components/ui/button";
 import {
   InputOTPSlot,
   InputOTPGroup,
-  InputOTPSeparator,
   InputOTP,
 } from "@/components/ui/input-otp";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { makeApp, sendPatientOtp } from "../../../assets/Apis/assets";
+import { makeApp } from "../../../assets/Apis/assets";
 const medicines = new Array();
 export default function MakeApp() {
   const [patientData, setPatientData] = useState();

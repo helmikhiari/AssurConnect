@@ -5,7 +5,7 @@ import { userContext } from "../../Context/userContext";
 import Loading from "../../components/loading";
 import { AppointmentIcon, DashboardIcon, SettingsIcon } from "../../assets/icons/icons";
 import InfoBar from "../../components/infobar";
-import appImg from "../../assets/icons/appointment.png"
+
 const DashboardLayout = () => {
   const [loading, setLoading] = useState(true);
  
