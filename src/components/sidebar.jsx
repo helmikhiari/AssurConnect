@@ -32,7 +32,7 @@ export default function SideBar({ links }) {
 
   useEffect(() => {
     document.addEventListener("mousedown", handleClickOutside);
-    
+
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
@@ -42,10 +42,9 @@ export default function SideBar({ links }) {
     setIsOpen(false);
   }, [location]);
 
-  const navigateHome=()=>
-    {
-      navigate('/')
-    }
+  const navigateHome = () => {
+    navigate("/");
+  };
 
   return (
     <div className="flex flex-col h-screen w-auto drop-shadow  z-40 ">
@@ -57,7 +56,10 @@ export default function SideBar({ links }) {
       >
         <div className="flex flex-col h-full justify-between px-6 py-8 drop-shadow">
           <div className="space-y-6">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={navigateHome}>
+            <div
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={navigateHome}
+            >
               <CloudIcon className="h-6 w-6 text-gray-50" />
               <span className="text-lg font-semibold text-gray-50 ">
                 AssurConnect
@@ -96,12 +98,12 @@ export default function SideBar({ links }) {
                 {(activeProfile.role === "Company" ||
                   activeProfile.role === "Assurance" ||
                   activeProfile.role === "Pharmacy") && (
-                  <AvatarFallback>
+                  <AvatarFallback className="uppercase">
                     {activeProfile.data.name[0] + activeProfile.data.name[1]}
                   </AvatarFallback>
                 )}
               </Avatar>
-              <p className="break-words w-full">
+              <p className="break-words  w-full">
                 {activeProfile.role == "Doctor"
                   ? activeProfile.data.firstName +
                     " " +

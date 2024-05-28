@@ -340,8 +340,13 @@ export async function getPrescription(presID,token)
     const response=await Get(API_BASE+"/pharmacy/getPrescription/"+presID,token);
     
     if (response.status===200)
-    {
-        return {data:response.data};
+    {   if (response.data.prescription.status==="Not Served")
+
+       return {data:response.data};
+        else
+        {
+            return {error:"Prescription is Fully Served"};
+        }
     }
     else if (response.status===404)
         return {error:"Please provide a valid prescription Identifier"};
@@ -351,4 +356,73 @@ export async function getPrescription(presID,token)
     {
         return {error:"Error Occured"};
     }
+}
+
+export async function serve(token,presID,price,medicinesServed)
+{
+    const dataToSend=
+    {
+        presID,
+        price,
+        medicinesServed
+    }
+    
+  
+    const response=await Post(API_BASE+'/pharmacy/serve',dataToSend,token)
+    if (response.status===201)
+        {
+            return response.data
+        }
+    else if (response.status===400)
+        {
+            return {error:"Prescription is Fully Served"}
+        }
+    else
+    {
+        console.log(response.error);
+        return false;
+    }
+}
+
+export async function confimServe(sessionToken,code)
+{
+    const response=await Patch(API_BASE+'/pharmacy/confirmServe',{code},sessionToken);
+    console.log(response)
+    if (response.status===200)
+    {
+        return true;
+    }
+    else if (response.status===401)
+    {
+        return {error:"Please Check the verification code"};
+    }
+    else
+    {
+        console.log(response.error);
+    }
+}
+
+
+export async function countEmployees(token)
+{
+    const response=await Get(API_BASE+'/company/countAllEmployees',token);
+    if (response.status===200)
+        return response.data;
+    else
+        console.log(response.error);
+}
+
+
+export async function getEmployeesByPage(token,page)
+{
+    const response=await Get(API_BASE+"/company/allEmployees/"+page,token)
+    if (response.status===200)
+    {console.log(response)
+        if (response.data.length>0)
+            {   
+                return response.data}
+        else return false;
+    }
+    else
+        console.log(response.error);
 }

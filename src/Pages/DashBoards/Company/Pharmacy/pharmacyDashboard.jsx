@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
 import {
   CardTitle,
   CardHeader,
@@ -24,27 +25,56 @@ import {
   XIcon,
 } from "../../../../assets/icons/icons";
 import DashboardCard from "../../../../components/dashboardCard";
-import { checkMail, getPrescription } from "../../../../assets/Apis/assets";
-import { isPositiveInteger } from "../../../../assets/functions";
-const checkedMeds = [];
+import {
+  checkMail,
+  confimServe,
+  getPrescription,
+  serve,
+} from "../../../../assets/Apis/assets";
+import { isPositiveInteger, isValidPrice } from "../../../../assets/functions";
+import classNames from "classnames";
+import { API_BASE } from "../../../../../env";
+import AlertModal from "../../../../components/alertModal";
+let checkedMeds = [];
 function PharmacyDashboard() {
   const [disableCheckBox, setDisableCheckBox] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [prescription, setPrescription] = useState();
+  const [success, setSuccess] = useState(false);
+  const [sessionToken, setSessionToken] = useState();
   const token = localStorage.getItem("token");
-  console.log(checkedMeds);
-  const toogleShowOTP = () => setShowOTP((prev) => !prev);
-  const toogleDisableCheckBox = () => setDisableCheckBox((prev) => !prev);
 
-  const handleServe = () => {
+  const handleClose = () => {
+    setPrescription(null);
+    setSessionToken(null);
+    setSuccess(false);
     toogleDisableCheckBox();
     toogleShowOTP();
   };
 
+  const toogleShowOTP = () => {
+    setShowOTP((prev) => !prev);
+  };
+  const toogleDisableCheckBox = () => setDisableCheckBox((prev) => !prev);
+
+  const handleChanges = () => {
+    toogleDisableCheckBox();
+    toogleShowOTP();
+    setSessionToken(null);
+  };
+
   const Medicine = ({ data, id }) => {
     const [isChecked, setIsChecked] = useState(checkedMeds.includes(id));
+    const [disable, setDisable] = useState(false);
+    useEffect(() => {
+      if (data.served === "Served") {
+        setIsChecked(true);
+        setDisable(true);
+      }
+    }, []);
+
     const handleDivClick = () => {
-      if (!disableCheckBox) {
+      if (!disableCheckBox && !disable) {
         setIsChecked((prev) => {
           const newCheckedState = !prev;
           handleMedCheck(newCheckedState);
@@ -58,20 +88,19 @@ function PharmacyDashboard() {
       else if (!checked) {
         checkedMeds.splice(checkedMeds.indexOf(id), 1);
       }
-      console.log(checkedMeds);
     };
     return (
       <div
-        className="flex items-center justify-center"
+        className="flex items-center justify-center bg-white cursor-pointer p-1"
         onClick={handleDivClick}
       >
         <Checkbox
-          className="w-5 h-5"
+          className="w-5 h-5 data-[state=checked]:bg-darkblue "
           id={id}
           checked={isChecked}
-          disabled={disableCheckBox}
+          disabled={disableCheckBox || disable}
         />
-        <div className="flex flex-row w-[100%] items-center justify-around flex-wrap">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 w-[100%]">
           <div>
             <div className="font-medium">Medication</div>
             <div className="text-gray-500">{data.name}</div>
@@ -80,11 +109,13 @@ function PharmacyDashboard() {
             <div className="font-medium">Dosage</div>
             <div className="text-gray-500">{data.dosage}</div>
           </div>
+
           <div>
             <div className="font-medium">Notes</div>
             <div className="text-gray-500">{data.instruction}</div>
           </div>
-          <Separator className="mt-4" />
+
+          <Separator className="col-span-3 mt-4" />
         </div>
       </div>
     );
@@ -92,10 +123,39 @@ function PharmacyDashboard() {
 
   const Prescription = () => {
     const [OTP, setOTP] = useState();
+    const [errors, setErrors] = useState({});
     const handleOTPChange = (value) => {
       setOTP(value);
     };
+    const [price, setPrice] = useState("");
+    const handlePriceChange = (e) => {
+      if (isValidPrice(e.target.value) || e.target.value == "") {
+        setPrice(e.target.value);
+      }
+    };
+
     const handleClear = () => setPrescription(null);
+    const handleServe = async () => {
+      toogleDisableCheckBox();
+      toogleShowOTP();
+      const response = await serve(
+        token,
+        prescription.prescription._id,
+        price,
+        checkedMeds
+      );
+      if (response.error) {
+        setErrors(response);
+      } else if (response) setSessionToken(response);
+    };
+
+    const handleConfirmServe = async () => {
+      console.log(sessionToken);
+      const response = await confimServe(sessionToken, OTP);
+      if (!response.error) setSuccess(true);
+      else setErrors(response);
+    };
+
     return (
       <>
         <CardHeader className="flex flex-row items-center justify-between pb-2 ">
@@ -117,7 +177,7 @@ function PharmacyDashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 gap-4 space-y-3">
+          <div className="grid grid-cols-1 gap-0 space-y-2 md:space-y-2">
             <div className=" flex flex-col items-start gap-3">
               <p className="font-medium">Patient</p>
               <div className="flex flex-row items-center gap-4">
@@ -141,36 +201,62 @@ function PharmacyDashboard() {
         </CardContent>
         <CardFooter className="flex justify-end gap-2">
           {!showOTP ? (
-            <>
-              <Button variant="destructive" onClick={handleClear}>
-                <XIcon className="w-4 h-4 mr-2 text-white" />
-                Clear
-              </Button>
-              <Button
-                className="bg-green-500 hover:bg-green-600 "
-                onClick={handleServe}
-              >
-                <PillIcon className="w-4 h-4 mr-2 text-white" />
-                Serve
-              </Button>
-            </>
+            <div className="flex justify-between w-full gap-3 items-center flex-wrap">
+              {errors.error && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.error}
+                </span>
+              )}
+              <div className="flex flex-row items-center gap-6">
+                <Label htmlFor="price">Price</Label>
+                <Input
+                  id="price"
+                  onChange={handlePriceChange}
+                  className="w-auto"
+                  value={price}
+                />
+              </div>
+              <div className="flex gap-6">
+                <Button variant="destructive" onClick={handleClear}>
+                  <XIcon className="w-4 h-4 mr-2 text-white" />
+                  Clear
+                </Button>
+                <Button
+                  className="bg-green-500 hover:bg-green-600 "
+                  onClick={handleServe}
+                >
+                  <PillIcon className="w-4 h-4 mr-2 text-white" />
+                  Serve
+                </Button>
+              </div>
+            </div>
           ) : (
-            <div className="flex justify-center flex-wrap">
-              <InputOTP
-                maxLength={5}
-                className="flex flex-wrap"
-                onChange={handleOTPChange}
-                value={OTP}
-              >
-                <InputOTPGroup>
-                  <InputOTPSlot index={0} />
-                  <InputOTPSlot index={1} />
-                  <InputOTPSlot index={2} />
-                  <InputOTPSlot index={3} />
-                  <InputOTPSlot index={4} />
-                </InputOTPGroup>
-              </InputOTP>
-              <Button>Confirm</Button>
+            <div className="flex justify-between items-center flex-wrap w-full">
+              <Button variant="destructive" onClick={handleChanges}>
+                Cancel
+              </Button>
+              <div className="flex flex-row gap-4 items-center flex-wrap">
+                <p className="font-medium text-gray-700">Verification Code</p>
+                <InputOTP
+                  maxLength={5}
+                  className="flex flex-wrap"
+                  onChange={handleOTPChange}
+                  value={OTP}
+                >
+                  <InputOTPGroup>
+                    <InputOTPSlot index={0} className="w-8 h-8" />
+                    <InputOTPSlot index={1} className="w-8 h-8" />
+                    <InputOTPSlot index={2} className="w-8 h-8" />
+                    <InputOTPSlot index={3} className="w-8 h-8" />
+                  </InputOTPGroup>
+                </InputOTP>
+                <Button onClick={handleConfirmServe}>Confirm</Button>
+              </div>
+              {errors.error && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.error}
+                </span>
+              )}
             </div>
           )}
         </CardFooter>
@@ -184,6 +270,10 @@ function PharmacyDashboard() {
 
     const getPres = async (e) => {
       e.preventDefault();
+      setShowOTP(false);
+      setDisableCheckBox(false);
+      checkedMeds = [];
+      checkedMeds = [];
       const response = await getPrescription(prescriptionID, token);
 
       response.data
@@ -229,12 +319,13 @@ function PharmacyDashboard() {
             Look up
           </Button>
         </form>
-        {errors && (
+        {errors ? (
           <span className="text-red-500 flex justify-start text-sm ">
             {errors}
           </span>
+        ) : (
+          <Card className="mt-6">{prescription ? <Prescription /> : null}</Card>
         )}
-        <Card className="mt-6">{prescription ? <Prescription /> : null}</Card>
       </div>
     );
   };
@@ -266,6 +357,15 @@ function PharmacyDashboard() {
           </DashboardCard>
         </div>
         <PrescriptionLookup />
+        <AlertModal
+          title={"Prescription successfully served! "}
+          buttonTitle={"DISMISS"}
+          content={
+            "Another one checked off the list. Keep up the excellent work!"
+          }
+          onClick={handleClose}
+          open={success}
+        />
       </main>
     </div>
   );
