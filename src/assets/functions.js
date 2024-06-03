@@ -100,4 +100,9 @@ export function areDatesWithinXMinutes(date1, date2,minutes) {
     // Regular expression to match non-negative floats
     const regex = /^(?!0)\d+(\.\d*)?$/;
     return regex.test(price);
-};
+};  
+
+
+export function formatDateToYYYYMMDD(isoDateString) {
+    return isoDateString.split('T')[0];
+}

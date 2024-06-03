@@ -140,8 +140,8 @@ export default function Signup() {
       if (Object.keys(validation).length === 0) {
         if (accountType == "Doctor") {
           const response = await verifyCIN(formData.current.cin);
-          
-          if (response===true) {
+
+          if (response === true) {
             setErrors((prev) => ({ ...prev, cin: "CIN Already Used" }));
             return;
           }
@@ -568,7 +568,7 @@ export default function Signup() {
             </div>
           </div>
           <Button
-            className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
+            className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3"
             onClick={handleSubmitFormDcotor}
           >
             Finish
@@ -634,7 +634,7 @@ export default function Signup() {
             </div>
           </div>
           <Button
-            className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3 w-full"
+            className="w-1/2 rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-3"
             onClick={handleSubmitFormCompany}
           >
             Finish
@@ -759,9 +759,9 @@ export default function Signup() {
   };
 
   return !loading ? (
-    <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white text-[#272643]">
+    <div className="flex  w-full  justify-center pt-14 bg-gradient-to-b from-white via-[#e6f2ff] to-white text-[#272643]">
       <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-        <Progress value={(100/6)*currentForm} className="h-3" />
+        <Progress value={(100 / 6) * currentForm} className="h-3" />
         <div className="text-sm text-gray-500 flex justify-end pb-2">
           Step {currentForm} of 6
         </div>

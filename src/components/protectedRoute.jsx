@@ -5,7 +5,6 @@ import Loading from "./loading";
 export default function ProtectedRoute({ role, allowedRole, children }) {
   const navigate = useNavigate();
   const [loading,setLoading]=useState(true)
-  const a=false
   useEffect(() => {
     console.log("role"+role)
     

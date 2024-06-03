@@ -8,6 +8,7 @@ import {
   TableBody,
   Table,
 } from "@/components/ui/table";
+import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -56,13 +57,13 @@ export default function Appointments() {
   const onTabChange = (value) => setActiveTab(value);
   const handlePrev = () => setCurrentPage((prev) => prev - 1);
   const handleNext = () => setCurrentPage((prev) => prev + 1);
-  
+
   const reload = () => window.location.reload();
- 
+
   const fetchApps = async () => {
     const response = await getAppsByStatus_Page(token, currentPage, activeTab);
     setData(response);
-  }
+  };
 
   useEffect(() => {
     const fetchAppsCount = async () => {
@@ -253,14 +254,14 @@ export default function Appointments() {
       <Card className=" drop-shadow mx-5 flex flex-col h-full w-full justify-between rounded-[25px]">
         <Table className="flex flex-col w-full text-center ">
           <TableHeader>
-            <TableRow className="grid grid-cols-3 bg-gray-200 rounded-tr-[25px] rounded-tl-[25px] px-10">
+            <TableRow className="grid grid-cols-3  bg-darkblue hover:bg-darkblue text-white rounded-t-xl px-10">
               <TableHead className="text-left place-content-center">
-                <p className="pl-5 text-darkblue">Patient</p>
+                <p className="pl-5 text-white">Patient</p>
               </TableHead>
-              <TableHead className="text-darkblue place-content-center text-center">
+              <TableHead className="text-white place-content-center text-center">
                 Date
               </TableHead>
-              <TableHead className="text-center text-darkblue place-content-center text-right">
+              <TableHead className=" text-white place-content-center text-right">
                 Status
               </TableHead>
             </TableRow>
@@ -338,8 +339,9 @@ export default function Appointments() {
           </TableBody>
         </Table>
         <AproveRejectCancelApp open={dialogType1} />
-        <div className="cursor-pointer ">
-          <PaginationContent className="flex justify-between px-[80px] bg-gray-200  rounded-bl-[25px] rounded-br-[25px]">
+        <Separator />
+        <div>
+          <PaginationContent className="flex justify-between px-[80px] bg-gray-50  rounded-bl-[25px] rounded-br-[25px]">
             <p className="flex justify-self-end cursor-default font-sm text-sm text-right">
               {!loadingCount ? (
                 `${Math.min(
@@ -356,13 +358,16 @@ export default function Appointments() {
             <div className="flex self-center gap-10">
               {currentPage != 0 && (
                 <PaginationItem>
-                  <PaginationPrevious onClick={handlePrev} />
+                  <PaginationPrevious
+                    onClick={handlePrev}
+                    className="cursor-pointer"
+                  />
                 </PaginationItem>
               )}
 
               {Math.min((currentPage + 1) * 5, activeTabcountApps) !=
                 activeTabcountApps && (
-                <PaginationItem onClick={handleNext}>
+                <PaginationItem onClick={handleNext} className="cursor-pointer">
                   <PaginationNext />
                 </PaginationItem>
               )}

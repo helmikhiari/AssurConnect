@@ -7,16 +7,19 @@ import {
   AppointmentIcon,
   DashboardIcon,
   SettingsIcon,
+  ShieldIcon,
   UsersIcon,
 } from "../../assets/icons/icons";
 import InfoBar from "../../components/infobar";
+import { health } from "../../assets/Apis/assets";
 
 const DashboardLayout = () => {
   const [loading, setLoading] = useState(true);
-
   const navigate = useNavigate();
   const { activeProfile } = useContext(userContext);
+
   useEffect(() => {
+    
     if (activeProfile != null) {
       //if active profile!=null then i've got a response from loadMe whether data=user or data=false
       console.log("here" + activeProfile.data);
@@ -27,6 +30,7 @@ const DashboardLayout = () => {
       }
     }
   }, [activeProfile]);
+
 
   const links = [
     {
@@ -43,6 +47,7 @@ const DashboardLayout = () => {
         url: "/dashboard/appointments",
         icon: <AppointmentIcon className="h-6 w-6" />,
       });
+      break;
     }
 
     case "Company": {
@@ -51,6 +56,12 @@ const DashboardLayout = () => {
         url: "/dashboard/employees",
         icon: <UsersIcon className="h-6 w-6" />,
       });
+      links.push({
+        text: "Plans",
+        url: "/dashboard/plans",
+        icon: <ShieldIcon className="h-6 w-6" />,
+      });
+      break;
     }
   }
   links.push({
@@ -59,7 +70,6 @@ const DashboardLayout = () => {
     icon: <SettingsIcon className="h-5 w-5" />,
   });
 
-  
   return !loading ? (
     <div className="flex h-screen overflow-hidden ">
       <SideBar links={links} className="sticky top-0 h-full" />

@@ -1,14 +1,14 @@
 
-
-
-export function validateForm1(data,type) {
-  
-  function isValidCin(cin)
+function isValidCin(cin)
   {
     const cinRegex=/^\d{8}$/
     return cinRegex.test(cin);
   }
 
+
+export function validateForm1(data,type) {
+  
+  
     const errors = {};
     const messages = {
         name: "Please provide a valid "+type+" name",
@@ -297,7 +297,7 @@ export function validateEditProfileDoctor(data)
     {
       errors.address=messages.address
     }
-   if (data.hasOwnProperty("gender")&&!data.gender)
+   if (!data.hasOwnProperty("gender"))
     {
       errors.gender=messages.gender;
     }
@@ -339,3 +339,115 @@ export function validateEditProfileCompany(data)
     }
     return errors;
 } 
+
+export function validateAddEmp(data)
+{
+  const errors={};
+  const messages={
+    firstName:"Please provide a valid FirstName",
+    lastName:"Please provide a valid LastName",
+    gender:"Gender is required",
+    cin:"Please provide a valid CIN",
+    birthDate:"Required",
+    jobTitle:"Please provide a valid Job Title",
+    req:"Required"
+  }
+
+  if (data.hasOwnProperty("firstName")&& !isValid(data.firstName,2))
+    {
+      errors.firstName=messages.firstName
+    }
+  else if (!data.hasOwnProperty("firstName"))
+    {
+      errors.firstName=messages.req
+    }
+
+   if (data.hasOwnProperty("lastName")&&!isValid(data.lastName,2))
+    {
+      errors.lastName=messages.lastName
+    }
+    else if (!data.lastName)
+      {
+        errors.lastName=messages.req
+      }
+
+  if (data.cin&&!isValidCin(data.cin))
+    {
+      errors.cin=messages.cin;
+    }
+  else if (!data.cin)
+    {
+      errors.cin=messages.req;
+    }
+
+    if (!data.birthDate)
+      {
+        errors.birthDate=messages.req;
+      }
+
+    if (!data.gender)
+      {
+        errors.gender=messages.req
+      }
+    
+    if (data.jobTitle&&!isValid(data.jobTitle,5))
+      {
+        errors.jobTitle=messages.jobTitle;
+      }
+    else if (!data.jobTitle)
+      {
+        errors.jobTitle=messages.req;
+      }
+
+    return errors;
+}
+
+
+export function validateUpdateEmp(data)
+{
+  const errors={}
+  const messages={
+    
+      firstName:"Please provide a valid FirstName",
+      lastName:"Please provide a valid LastName",
+      birthDate:"Required",
+      jobTitle:"Please provide a valid Job Title",
+    
+  } 
+  if (data.hasOwnProperty("firstName")&& !isValid(data.firstName,2))
+    {
+      errors.firstName=messages.firstName
+    }
+ 
+
+   if (data.hasOwnProperty("lastName")&&!isValid(data.lastName,2))
+    {
+      errors.lastName=messages.lastName
+    }
+   
+
+   if (data.jobTitle&&!isValid(data.jobTitle,5))
+        {
+          errors.jobTitle=messages.jobTitle;
+        }
+
+
+    return errors;
+}
+
+
+export function validateSearch(search)
+{ console.log(search)
+  if (search.trim().length === 0) {
+    return false;
+}
+if (search.length > 100) {
+    return false;
+}
+const regex = /^[a-zA-Z\s]+$/;
+if (!regex.test(search)) {
+    return false;
+}
+
+return true;
+}

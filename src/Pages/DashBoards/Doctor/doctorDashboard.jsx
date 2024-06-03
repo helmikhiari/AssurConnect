@@ -111,53 +111,64 @@ export default function DoctorDashboard() {
   };
 
   const Prescription = ({ open, onClick }) => {
-    if (nextAppWindowInfo!==false&&nextAppWindowInfo!=undefined) 
+    if (nextAppWindowInfo !== false && nextAppWindowInfo != undefined)
       return (
-      <AlertDialog open={open}>
-        <AlertDialogContent className="bg-white rounded-lg shadow-lg p-8 w-full mx-auto  overflow-y-auto max-h-screen">
-          <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Medical Prescription</h1>
-            <div className="bg-gray-100 px-4 py-2 rounded-full text-sm font-medium text-gray-600">
-              Prescription #{nextAppWindowInfo?.presId}
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-8">
-            <div>
-              <h2 className="text-lg font-medium mb-2">Patient Information</h2>
-              <div className="text-gray-600">
-                <p className="capitalize">Name: {nextAppWindowInfo?.nextApp.patientFirstName}{' '} {nextAppWindowInfo?.nextApp.patientLastName}</p>
-                {/* <p>Date of Birth: 01/01/1980</p> */}
+        <AlertDialog open={open}>
+          <AlertDialogContent className="bg-white rounded-lg shadow-lg p-8 w-full mx-auto  overflow-y-auto max-h-screen">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold">Medical Prescription</h1>
+              <div className="bg-gray-100 px-4 py-2 rounded-full text-sm font-medium text-gray-600">
+                Prescription #{nextAppWindowInfo?.presId}
               </div>
             </div>
-          </div>
-          <Separator />
-          <div>
-            <h2 className="text-lg font-medium mb-2">Prescribed Medications</h2>
-            <div className="space-y-4">
-              {nextAppWindowInfo?.prescription?.map((med) => {
-                return (
-                  <div className="bg-gray-100 p-4 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <h3 className="text-gray-800 font-medium">{med?.name}</h3>
-                      <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
-                        {med?.dosage}
-                      </div>
-                    </div>
-                    <p className="text-gray-600 text-sm">{med?.instruction}</p>
-                  </div>
-                );
-              })}
+            <div className="grid grid-cols-1 gap-8">
+              <div>
+                <h2 className="text-lg font-medium mb-2">
+                  Patient Information
+                </h2>
+                <div className="text-gray-600">
+                  <p className="capitalize">
+                    Name: {nextAppWindowInfo?.nextApp.patientFirstName}{" "}
+                    {nextAppWindowInfo?.nextApp.patientLastName}
+                  </p>
+                  {/* <p>Date of Birth: 01/01/1980</p> */}
+                </div>
+              </div>
             </div>
-            <Button
-              onClick={onClick}
-              className="w-full rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-5"
-            >
-              Close
-            </Button>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
-    );
+            <Separator />
+            <div>
+              <h2 className="text-lg font-medium mb-2">
+                Prescribed Medications
+              </h2>
+              <div className="space-y-4">
+                {nextAppWindowInfo?.prescription?.map((med) => {
+                  return (
+                    <div className="bg-gray-100 p-4 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="text-gray-800 font-medium">
+                          {med?.name}
+                        </h3>
+                        <div className="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-600">
+                          {med?.dosage}
+                        </div>
+                      </div>
+                      <p className="text-gray-600 text-sm">
+                        {med?.instruction}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+              <Button
+                onClick={onClick}
+                className="w-full rounded-lg bg-[#272643] py-3 font-medium text-white hover:bg-[#1c1e3b] mt-5"
+              >
+                Close
+              </Button>
+            </div>
+          </AlertDialogContent>
+        </AlertDialog>
+      );
   };
 
   const NextApp = () => {

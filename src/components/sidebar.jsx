@@ -50,7 +50,7 @@ export default function SideBar({ links }) {
     <div className="flex flex-col h-screen w-auto drop-shadow  z-40 ">
       <div
         ref={sidebarRef}
-        className={`  fixed inset-y-0 left-0 w-[200px] bg-[#272643] drop-shadow-mdtransform ${
+        className={`  fixed inset-y-0 left-0 w-[200px] bg-darkblue drop-shadow-mdtransform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
@@ -69,9 +69,9 @@ export default function SideBar({ links }) {
               {links.map((link, index) => (
                 <NavLink
                   key={index}
-                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-white hover:bg-[#3a3d6b] hover:text-gray-50 ${
+                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-white hover:bg-gray-400 hover:text-gray-50 ${
                     location.pathname === link.url
-                      ? "bg-[#3a3d6b] text-gray-50"
+                      ? "bg-gray-400 text-gray-50"
                       : ""
                   }`}
                   to={link.url}

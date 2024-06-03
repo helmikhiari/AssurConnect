@@ -59,3 +59,18 @@ export async function Patch(path,data,token)
     }
 }
 
+export async function Delete(path,token)
+{    
+    try{
+      const head = {
+        headers: {Authorization: `Bearer ${token}`},
+      };
+     const response = await axios.delete(
+        path,
+        head
+      );
+      return response
+    } catch (error) {
+      return error.response
+    }
+}

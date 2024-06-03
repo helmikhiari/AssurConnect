@@ -45,7 +45,7 @@ export default function Login() {
   };
 
   return !loading ? (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-[#d3e3f7] to-white">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-[#e6f2ff] to-white">
       <motion.div
         initial={{ x: "100%", opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}

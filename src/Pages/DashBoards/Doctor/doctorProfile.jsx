@@ -79,15 +79,16 @@ export default function DoctorProfile({ profile }) {
             <h2 className="text-2xl font-bold">
               Dr. {profile.firstName + " " + profile.lastName}
             </h2>
-            <p className="text-gray-500 text-left">
-              {profile.speciality}
-            </p>
+            <p className="text-gray-500 text-left">{profile.speciality}</p>
           </div>
         </div>
         <Button variant="outline">Change Image Profile</Button>
       </div>
-      <Card className="shadow text-left">
-        <CardHeader>
+      <Card
+        Card
+        className="shadow-md hover:shadow-xl text-left rounded-2xl transistion-shadow duration-500 drop-shadow-md"
+      >
+        <CardHeader className="bg-darkblue text-white rounded-t-2xl  mb-5 pl-10">
           <CardTitle>Edit Profile</CardTitle>
           <CardDescription>Update your profile information.</CardDescription>
         </CardHeader>
@@ -107,7 +108,6 @@ export default function DoctorProfile({ profile }) {
             <Input
               defaultValue={profile.cin}
               id="cin"
-              
               disabled
               name="cin"
               onChange={handleChange}
