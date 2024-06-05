@@ -1,69 +1,92 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CardHeader, CardContent, Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { useLocation, useNavigate } from "react-router-dom";
+import { buyPlanCompany, getAssuranceDetails } from "../../../../assets/Apis/assets";
+import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
+import Loading from "../../../../components/loading";
 export default function AssuranceDetails() {
+  const {state}=useLocation();
+  const [loading,setLoading]=useState(true);
+  const [assuranceData,setAssuranceData]=useState();
+  const [planData,setPlanData]=useState();
+  const token=localStorage.getItem('token');
+  const navigate=useNavigate();
+  const fetchData=async(id)=>
+  { let aux;
+    id? aux=id:aux=state.id
+    const response=await getAssuranceDetails(token,aux,state.assuranceID);
+    if (response)
+      { 
+        setAssuranceData(response.assurance);
+        setPlanData(response.plan);
+        
+      }
+    setLoading(false);
+  }
+
+  useEffect(()=>{
+    fetchData();
+  },[])
+
+  const handleChange=(id)=>
+    {
+      setLoading(true);
+      fetchData(id);
+    }
+
+    const buyPlan=async()=>
+    {
+      const response=await buyPlanCompany(token,planData._id)
+      if (response)
+        { 
+          navigate('../plans');
+        }  
+    }
+
   return (
+    !loading?
     <main className="flex flex-1 flex-col gap-6 p-6 md:gap-10 md:p-10">
       <Card className="rounded-xl shadow-lg">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <img
-                alt="Acme Insurance"
-                className="rounded-full"
-                height="48"
-                src="/placeholder.svg"
-                style={{
-                  aspectRatio: "48/48",
-                  objectFit: "cover",
-                }}
-                width="48"
-              />
+            <Avatar className="h-20 w-20 text-darkblue cursor-normal hover:h-[100px] hover:w-[100px] drop-shadow transition-all duration-500">
+                  <AvatarImage src={assuranceData?.logo} />
+                  <AvatarFallback className="bg-darkblue text-white 2xl uppercase">
+                    {assuranceData?.name[0]}
+                    {assuranceData?.name[1]}
+                  </AvatarFallback>
+                </Avatar>
               <div>
-                <h2 className="text-xl font-semibold">Acme Insurance</h2>
+                <h2 className="text-xl font-semibold">{assuranceData?.name} Insurance</h2>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Trusted provider of assurance plans since 1985.
+                  {assuranceData?.bio}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline">
-                Visit Website
-              </Button>
-            </div>
+          
           </div>
         </CardHeader>
         <CardContent className="text-left">
           <div className="grid gap-6 md:grid-cols-2">
             <div>
-              <h3 className="text-lg font-semibold">About Acme Insurance</h3>
+              <h3 className="text-lg font-semibold">About {assuranceData?.name} Insurance</h3>
               <p className="text-gray-500 dark:text-gray-400">
-                Acme Insurance is a leading provider of assurance plans in the
-                United States. Founded in 1985, we have a long history of
-                providing reliable and affordable coverage to individuals and
-                families. Our mission is to help our customers protect their
-                financial future and achieve peace of mind.
+                {assuranceData?.description}.
               </p>
             </div>
             <div>
               <h3 className="text-lg font-semibold">Company Details</h3>
               <div className="grid gap-2">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between capitalize">
                   <span>Headquarters:</span>
-                  <span>San Francisco, CA</span>
+                  <span>{assuranceData?.address}</span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span>Founded:</span>
-                  <span>1985</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Employees:</span>
-                  <span>500+</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span>Customers:</span>
-                  <span>1 million+</span>
+                  <span>{assuranceData?.founded}</span>
                 </div>
               </div>
             </div>
@@ -74,13 +97,13 @@ export default function AssuranceDetails() {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold">Premium Plan</h2>
+              <h2 className="text-xl font-semibold">{planData?.title} Plan</h2>
               <p className="text-gray-500 dark:text-gray-400">
-                $200/month, $0 deductible, $250,000 coverage
+                {planData?.bio}
               </p>
             </div>
-            <Button size="sm" variant="outline">
-              Select
+            <Button onClick={buyPlan}>
+              Buy
             </Button>
           </div>
         </CardHeader>
@@ -89,51 +112,67 @@ export default function AssuranceDetails() {
             <div>
               <h3 className="text-lg font-semibold">Plan Details</h3>
               <div className="grid gap-2 text-gray-500 dark:text-gray-400">
+              
                 <div className="flex items-center justify-between">
-                  <span>Monthly Premium:</span>
-                  <span>$200</span>
+                  <span>Price</span>
+                  <span>TND {planData?.price}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Deductible:</span>
-                  <span>$0</span>
+                  <span>Coverage</span>
+                  <span>TND {planData?.cover}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Coverage Amount:</span>
-                  <span>$250,000</span>
+                  <span>Coverage Amount</span>
+                  <span>TND {planData?.cover*planData?.numberOfUsers}</span>
                 </div>
+                <div className="flex items-center justify-between">
+                  <span>Number Of Users</span>
+                  <span>{planData?.numberOfUsers}</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span>Duration</span>
+                  <span>{planData?.duration} Days</span>
+                </div>
+
+                <div className="flex justify-between flex-col">
+                  <span>Coverage Details</span>
+                  <span>{planData?.coverageDetails}</span>
+                </div>
+                <div className="flex justify-between flex-col">
+                  <span>Exclusions</span>
+                  <span>{planData?.exclusions}</span>
+                </div>
+
               </div>
+              <div className="flex items-start justify-between flex-col">
+                  <h3 className="text-lg font-semibold">Description:</h3>
+                  <span>{planData?.description}</span>
+                </div>
             </div>
             <Separator />
             <div>
               <h3 className="text-lg font-semibold">Other Plans</h3>
               <div className="grid gap-4">
-                <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-                  <div>
-                    <h4 className="font-semibold">Basic Plan</h4>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      $50/month, $500 deductible, $50,000 coverage
-                    </p>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    Select
-                  </Button>
-                </div>
-                <div className="grid grid-cols-[1fr_auto] items-center gap-4">
-                  <div>
-                    <h4 className="font-semibold">Standard Plan</h4>
-                    <p className="text-gray-500 dark:text-gray-400">
-                      $100/month, $250 deductible, $100,000 coverage
-                    </p>
-                  </div>
-                  <Button size="sm" variant="outline">
-                    Select
-                  </Button>
-                </div>
+               { assuranceData?.plans.map((plan,index)=>
+              <div className="grid grid-cols-[1fr_auto] items-center gap-4" key={index}>
+              <div>
+                <h4 className="font-semibold">{plan.title} Plan</h4>
+                <p className="text-gray-500 dark:text-gray-400">
+                  {plan.bio}
+                </p>
+              </div>
+              <Button size="sm" variant="outline" onClick={()=>handleChange(plan._id)}>
+                Select
+              </Button>
+            </div>)}
+                
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
     </main>
+    :
+    <Loading/>
   );
 }

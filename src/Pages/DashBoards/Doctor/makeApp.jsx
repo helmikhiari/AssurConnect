@@ -21,7 +21,7 @@ export default function MakeApp() {
   const [otpError, setOtpError] = useState(null);
   const location = useLocation();
   const token = localStorage.getItem("token");
-
+  console.log(location)
   const navigate = useNavigate();
   const changeNotes = (e) => setNotes(e.target.value);
   const changeOTP = (value) => {

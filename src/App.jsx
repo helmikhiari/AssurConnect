@@ -2,7 +2,11 @@ import { useContext, useEffect } from "react";
 import Home from "./Pages/Home/home.jsx";
 import Signup from "./Pages/Auth/signup.jsx";
 import "./App.css";
-import { createBrowserRouter, RouterProvider, useNavigate } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
 import RootLayout from "./rootLayout";
 import AboutUs from "./Pages/Home/about.jsx";
 import { userContext } from "./Context/userContext.jsx";
@@ -26,16 +30,14 @@ import ManagePlan from "./Pages/DashBoards/Company/Regular Company/managePlan.js
 import { health } from "./assets/Apis/assets.js";
 
 export default function App() {
- 
-  const healthCheck=async()=>
-    {
-      const response=await health();
-      console.log(response)
-      if (response.status=="DOWN")
-        {console.log("here")
-          window.location.replace('/serverDown')
-        }
+  const healthCheck = async () => {
+    const response = await health();
+    console.log(response);
+    if (response.status == "DOWN") {
+      console.log("here");
+      window.location.replace("/serverDown");
     }
+  };
   const { loadMe, setActiveProfile, activeProfile } = useContext(userContext);
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +51,7 @@ export default function App() {
         setActiveProfile({ data: false });
       }
     };
-    
+
     fetchData();
   }, []);
 
@@ -134,7 +136,7 @@ export default function App() {
           element: (
             <ProtectedRoute allowedRole="Company" role={activeProfile?.role}>
               <Plans />
-            </ProtectedRoute>
+            </ProtectedRoute> 
           ),
         },
         {
@@ -161,12 +163,11 @@ export default function App() {
             </ProtectedRoute>
           ),
         },
-       
+
         {
           path: "/dashboard/unauthorized",
           element: <Unauthorized />,
         },
-        
       ],
     },
   ]);

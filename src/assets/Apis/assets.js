@@ -530,6 +530,80 @@ export async function getPlansByPageandSearch(page,search)
     else
     {
         console.error(response)
+        
+    }
+}
+
+export async function getAssuranceDetails(token,planID,assuranceID)
+{   
+    const response=await Get(API_BASE+"/company/assuranceDetails/"+planID+"?assuranceID="+assuranceID,token)
+    if (response.status===200)
+        {
+            return response.data
+        }
+    else
+    {
+        console.error(response);
+        return false;
+    }
+}
+
+
+export async function buyPlanCompany(token,planID)
+{   
+    const response=await Post(API_BASE+"/company/buyPlan?planId="+planID,null,token);
+    if (response.status===201)
+        {
+            return response.data
+        }
+    else
+    {
+        console.error(response);
+        return false;
+    }
+}
+
+export async function getOwnedPlansCompany(token)
+{
+    const response=await Get(API_BASE+'/company/myPlans',token)
+    if (response.status===200)
+        {
+            return response.data
+        }
+    else
+    {
+        console.error(response)
+        return false;
+    }
+}
+
+
+export async function getOwnedPlanDetails(token,planID,assuranceID)
+{
+    const response=await Get(API_BASE+'/company/employeesPlan/'+planID,token);
+    if (response.status===200)
+        {
+            return response.data
+        }
+    else
+    {
+        console.error(response);
+        return false;
+    }
+}
+
+
+export async function addEmpPlan(token,empId,planUsersId)
+{   const dataToSend={empId,planUsersId}
+    console.log(dataToSend)
+    const response=await Post(API_BASE+'/company/addEmpToPlan',dataToSend,token)
+    if (response.status===201)
+        {
+            return true
+        }
+    else
+    {
+        console.error(response);
         return false;
     }
 }
