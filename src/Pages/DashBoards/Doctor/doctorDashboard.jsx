@@ -20,6 +20,7 @@ import {
 } from "../../../assets/functions";
 import noAppsImg from "../../../assets/images/noAppsAvailable.jpg";
 import { useNavigate } from "react-router-dom";
+
 export default function DoctorDashboard() {
   const [nextAppWindowInfo, setNextAppWindowInfo] = useState();
   const [todayAppointments, setTodayAppointments] = useState();
@@ -227,7 +228,7 @@ export default function DoctorDashboard() {
                   Notes
                 </p>
                 <p className="text-left text-sm">
-                  {!nextAppWindowInfo?.prevApp.details
+                  {nextAppWindowInfo?.prevApp.details
                     ? nextAppWindowInfo?.prevApp.details
                     : "No details available for the last appointment."}
                 </p>
@@ -295,19 +296,28 @@ export default function DoctorDashboard() {
   return (
     <div className="flex ">
       <div className="flex-1 p-6">
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
           <DashboardCard
-            title="Patients"
-            number="2,350"
-            subNumber="+180.1% from last year"
+            title="New Patients"
+            number="+30"
+            subNumber="+37% from last month"
           >
             <UsersIcon className="w-4 h-4 text-darkblue" />
           </DashboardCard>
 
           <DashboardCard
             title="Upcoming Appointments"
-            number={`+${nextWeekAppsNumber}`}
+            // number={`+${nextWeekAppsNumber}`}
+            number={'+24  '}
             subNumber="in the next 7 days"
+          >
+            <CalendarIcon className="w-4 h-4 text-darkblue" />
+          </DashboardCard>
+          
+          <DashboardCard
+            title="Completed Appointments"
+            number="170"
+            subNumber="Last 30 days"
           >
             <CalendarIcon className="w-4 h-4 text-darkblue" />
           </DashboardCard>

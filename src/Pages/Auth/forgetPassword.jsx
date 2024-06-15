@@ -71,9 +71,7 @@ export default function ForgetPassword() {
     return (
       <>
         <div className="mb-8 flex items-center justify-center">
-          <NavLink>
-            <MountainIcon className="h-10 w-10 text-darkblue" />
-          </NavLink>
+         
         </div>
         <h1 className="mb-4 text-3xl font-bold text-darkblue">
           Forgot Password

@@ -27,6 +27,7 @@ export async function signUp(data,accountType)
         case "Company": path+="/company/signup";break;
     }
     let dataToSend;
+
     switch(accountType)
     {
         case "Doctor":
@@ -38,7 +39,11 @@ export async function signUp(data,accountType)
                 "email":data.email,
                 "password":data.password,
                 "gender":data.gender,
-                "address":data.address
+                "address":data.address,
+                "experience":data.experience,
+                "price":data.price,
+                "bio":data.bio,
+                "speciality":data.speciality
             }
             break;
         case "Company":
@@ -49,11 +54,12 @@ export async function signUp(data,accountType)
                 "address":data.address,
                 "email":data.email,
                 "password":data.password,
-                "description":data.description
+                "description":data.description,
+                "taxNumber":data.taxNumber
             }
             break;
     }
-    
+    console.log(dataToSend)
     const response=await Post(path,dataToSend);
     if (response.status===201)
     return response.data
@@ -78,7 +84,7 @@ export async function verifyOtp(email,code)
     const path=API_BASE+"/auth/verifyCodeSignUp";
     const data={email,"code":parseInt(code)}
     const response=await Post(path,data); 
-    return response;
+    return response.data;
 }
 
 export async function sendOtp(email)
@@ -607,3 +613,76 @@ export async function addEmpPlan(token,empId,planUsersId)
         return false;
     }
 }
+
+
+export async function getEnrolledEmployeesPlan(token)
+{
+    const response=await Get(API_BASE+'/company/countEnrolledEmployees',token);
+    if (response.status===200)
+        {
+            return response.data;
+        }
+    else
+    {
+        console.error(response);
+        return false;
+    }
+}
+
+
+export async function getActifPlansCompany(token)
+{
+    const response=await Get(API_BASE+'/company/actifPlans',token);
+    if (response.status===200)
+        {
+            return response.data;
+        }
+    else
+    {
+        console.error(response);
+        return false;
+    }
+}
+
+export async function addPlanAssurance(token,data)
+{   data.price=parseFloat(data.price);
+    data.numberOfUsers=parseInt(data.numberOfUsers)
+    data.duration=parseInt(data.duration)
+    data.cover=parseInt(data.cover)
+    const response=await Post(API_BASE+'/assurance/addPlan',data,token);
+    console.log(response)
+    if (response.status===201)
+        {
+            return response.data
+        }
+    else if (response.status===409)
+        {
+            return {error:"Plan with same name exist"}
+        }
+    else
+    {
+        console.log(response);
+        return false;
+    }
+}
+
+
+export async function getAssurancePlans(token)
+{
+    const response=await Get(API_BASE+'/assurance/allPlans',token)
+    if (response.status===200)
+        {
+            return response.data
+        }
+    else if (response.status===404)
+        {
+            return {error:"No Plans"}
+        }
+    else
+    {
+        console.log(response)
+        return false;
+    }
+}
+
+

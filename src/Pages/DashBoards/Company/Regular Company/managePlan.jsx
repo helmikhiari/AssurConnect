@@ -7,9 +7,15 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import {
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "react-router-dom";
 import {
@@ -17,7 +23,14 @@ import {
   getOwnedPlanDetails,
 } from "../../../../assets/Apis/assets";
 import CustomLoading from "../../../../components/customLoading";
-
+import {
+  CardTitle,
+  CardDescription,
+  CardHeader,
+  CardContent,
+  CardFooter,
+  Card,
+} from "@/components/ui/card";
 export default function ManagePlan() {
   const location = useLocation();
   const TOKEN = localStorage.getItem("token");
@@ -146,6 +159,7 @@ export default function ManagePlan() {
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
+              <TableHead className="text-right pr-12">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -162,11 +176,136 @@ export default function ManagePlan() {
                   {employee.planUserFirstName} {employee.planUserLastName}
                 </TableCell>
                 <TableCell>{employee.planUserEmail}</TableCell>
+                <TableCell>
+                  <div className="flex flex-row justify-end w-full pr-4">
+                    <Button variant="destructive">Block</Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+    );
+  };
+
+  const Claims = () => {
+    const [loadingCount, setLoadingCount] = useState(false);
+    const [currentPage, setCurrentPage] = useState(0);
+    const [claimsCount, setClaimsCount] = useState(127);
+
+    const handlePrev = () => setCurrentPage((prev) => prev - 1);
+    const handleNext = () => setCurrentPage((prev) => prev + 1);
+
+    return (
+      <Card>
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <div className="overflow-x-auto">
+            <table className="w-full table-auto">
+              <thead>
+                <tr className="bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400">
+                  <th className="px-4 py-2 text-left">Date</th>
+
+                  <th className="px-4 py-2 text-left">Service</th>
+                  <th className="px-4 py-2 text-left">Amount</th>
+                  <th className="px-4 py-2 text-left">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="px-4 py-2">April 15, 2023</td>
+
+                  <td className="px-4 py-2">General Doctor Visit</td>
+                  <td className="px-4 py-2">50.00 TND</td>
+                  <td className="px-4 py-2">
+                    <Badge className="bg-green-500 hover:bg-green-600 min-w-16">
+                      <span className="text-center w-full">Paid</span>
+                    </Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="px-4 py-2">March 28, 2023</td>
+
+                  <td className="px-4 py-2">Prescription Refill</td>
+                  <td className="px-4 py-2">20.00 TND</td>
+                  <td className="px-4 py-2">
+                    <Badge className="bg-green-500 hover:bg-green-600 min-w-16">
+                      <span className="text-center w-full">Paid</span>
+                    </Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="px-4 py-2">February 10, 2023</td>
+
+                  <td className="px-4 py-2">Dentist Visit</td>
+                  <td className="px-4 py-2">75.00 TND</td>
+                  <td className="px-4 py-2">
+                    <Badge className="bg-yellow-500 hover:bg-yellow-600 min-w-16">
+                      <span className="text-center w-full">Pending</span>
+                    </Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="px-4 py-2">February 10, 2023</td>
+
+                  <td className="px-4 py-2">Dentist Visit</td>
+                  <td className="px-4 py-2">75.00 TND</td>
+                  <td className="px-4 py-2">
+                    <Badge className="bg-yellow-500 hover:bg-yellow-600 min-w-16">
+                      <span className="text-center w-full">Pending</span>
+                    </Badge>
+                  </td>
+                </tr>
+                <tr className="border-b border-gray-200 dark:border-gray-700">
+                  <td className="px-4 py-2">February 10, 2023</td>
+
+                  <td className="px-4 py-2">Dentist Visit</td>
+                  <td className="px-4 py-2">75.00 TND</td>
+                  <td className="px-4 py-2">
+                    <Badge className="bg-yellow-500 hover:bg-yellow-600 min-w-16">
+                      <span className="text-center w-full">Pending</span>
+                    </Badge>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <PaginationContent className="flex  justify-between px-[80px] bg-gray-50 rounded-b-xl">
+              <p className="flex justify-self-end cursor-default font-sm text-sm text-right">
+                {!loadingCount ? (
+                  `${Math.min(currentPage * 5 + 1, claimsCount)}-${Math.min(
+                    (currentPage + 1) * 5,
+                    claimsCount
+                  )} of ${claimsCount}`
+                ) : (
+                  <CustomLoading className="w-7 h-7" />
+                )}
+              </p>
+              <div className="flex self-center gap-10">
+                {currentPage != 0 && (
+                  <PaginationItem>
+                    <PaginationPrevious
+                      className="cursor-pointer"
+                      onClick={handlePrev}
+                    />
+                  </PaginationItem>
+                )}
+
+                {Math.min((currentPage + 1) * 5, claimsCount) !=
+                  claimsCount && (
+                  <PaginationItem
+                    className="cursor-pointer"
+                    onClick={handleNext}
+                  >
+                    <PaginationNext />
+                  </PaginationItem>
+                )}
+              </div>
+            </PaginationContent>
+          </div>
+        </div>
+        <div className="mt-4 flex justify-end pb-2"></div>
+      </Card>
     );
   };
 
@@ -214,6 +353,10 @@ export default function ManagePlan() {
           <div className="border rounded-lg overflow-hidden">
             <EnrEmpTable enrEmp={enrolledEmployees} />
           </div>
+        </div>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Recent Claims</h2>
+          <Claims />
         </div>
       </div>
       <div className="bg-gray-700 rounded-lg p-6 md:p-8 text-white">

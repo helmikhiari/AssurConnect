@@ -601,6 +601,21 @@ export default function Signup() {
             {accountType} Informations
           </p>
           <div className="grid gap-4 text-left">
+          <div className="space-y-2">
+              <Label htmlFor="tax-number">Tax Number</Label>
+              <Input
+                id="tax-number"
+                name="taxNumber"
+                placeholder="1234567890"
+                onChange={handleChange}
+                defaultValue={formData.current.taxNumber}
+              />
+              {errors.taxNumber && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.taxNumber}
+                </span>
+              )}
+            </div>
             <div className="space-y-2">
               <Label htmlFor="address">Address</Label>
               <Input

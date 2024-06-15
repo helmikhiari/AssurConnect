@@ -130,24 +130,24 @@ export default function AssuranceDetails() {
                   <span>{planData?.numberOfUsers}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span>Duration</span>
+                  <span >Duration</span>
                   <span>{planData?.duration} Days</span>
                 </div>
 
                 <div className="flex justify-between flex-col">
-                  <span>Coverage Details</span>
+                  <span className="text-darkblue font-medium" >Coverage Details</span>
                   <span>{planData?.coverageDetails}</span>
                 </div>
                 <div className="flex justify-between flex-col">
-                  <span>Exclusions</span>
+                  <span className="text-darkblue font-medium" >Exclusions</span>
                   <span>{planData?.exclusions}</span>
                 </div>
-
-              </div>
-              <div className="flex items-start justify-between flex-col">
-                  <h3 className="text-lg font-semibold">Description:</h3>
+                <div className="flex items-start justify-between flex-col">
+                  <span  className="text-darkblue font-medium">Description:</span>
                   <span>{planData?.description}</span>
                 </div>
+              </div>
+          
             </div>
             <Separator />
             <div>

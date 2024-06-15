@@ -54,7 +54,7 @@ export default function CompanyProfile({ profile }) {
       <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
         <div className="flex items-center gap-4">
           <Avatar className="h-16 w-16">
-            <AvatarImage src={profile.data.picture} />
+            <AvatarImage src={profile.data.logo} />
             <AvatarFallback className="uppercase">
               {profile.data.name[0] + profile.data.name[1]}
             </AvatarFallback>

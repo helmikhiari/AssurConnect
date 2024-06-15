@@ -12,10 +12,9 @@ import {
   AlertDialogContent,
   AlertDialog,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import { CloudIcon, LogOutIcon, MenuIcon } from "../assets/icons/icons";
 import { userContext } from "../Context/userContext";
-import userIcon from "../assets/icons/placeholder.png";
+import  Logo  from "../assets/images/logo_transparent.png";
 export default function SideBar({ links }) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -23,7 +22,7 @@ export default function SideBar({ links }) {
   const { logOut, activeProfile } = useContext(userContext);
   const navigate = useNavigate();
   const toggleSidebar = () => setIsOpen(!isOpen);
-
+  console.log(location.pathname, " ", links);
   const handleClickOutside = (event) => {
     if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
       setIsOpen(false);
@@ -50,36 +49,37 @@ export default function SideBar({ links }) {
     <div className="flex flex-col h-screen w-auto drop-shadow  z-40 ">
       <div
         ref={sidebarRef}
-        className={`  fixed inset-y-0 left-0 w-[200px] bg-darkblue drop-shadow-mdtransform ${
+        className={`  fixed inset-y-0 left-0 w-[200px] bg-darkblue  transform ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         } sm:translate-x-0 transition-transform duration-300 ease-in-out`}
       >
-        <div className="flex flex-col h-full justify-between px-6 py-8 drop-shadow">
+        <div className="flex flex-col h-full justify-between px-0 py-8 ">
           <div className="space-y-6">
             <div
-              className="flex items-center gap-2 cursor-pointer"
+              className="flex items-center gap-2 cursor-pointer pl-5  "
               onClick={navigateHome}
             >
-              <CloudIcon className="h-6 w-6 text-gray-50" />
+              <img src={Logo} className="w-6" />
               <span className="text-lg font-semibold text-gray-50 ">
                 AssurConnect
               </span>
             </div>
             <nav className="space-y-2">
-              {links.map((link, index) => (
-                <NavLink
-                  key={index}
-                  className={`flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors text-white hover:bg-gray-400 hover:text-gray-50 ${
-                    location.pathname === link.url
-                      ? "bg-gray-400 text-gray-50"
-                      : ""
-                  }`}
-                  to={link.url}
-                >
-                  {link.icon}
-                  {link.text}
-                </NavLink>
-              ))}
+              {links.map((link, index) => {
+                const isActive = location.pathname === link.url;
+
+                const linkClassName = `flex items-center gap-2 rounded-r-full px-5 py-2 text-sm font-medium transition-all duration-500 hover:bg-slate-300 hover:text-darkblue w-[90%] ${
+                  isActive
+                    ? "bg-slate-200 text-darkblue"
+                    : "text-white bg-darkblue"
+                }`;
+                return (
+                  <NavLink key={index} className={linkClassName} to={link.url}>
+                    {link.icon}
+                    {link.text}
+                  </NavLink>
+                );
+              })}
             </nav>
           </div>
           <div className="space-y-2">
@@ -88,7 +88,7 @@ export default function SideBar({ links }) {
               to="/dashboard/profile"
             >
               <Avatar className="h-12 w-12 text-darkblue">
-                <AvatarImage src={activeProfile.data.picture} />
+                <AvatarImage src={activeProfile.data.picture||activeProfile.data.logo} />
                 {activeProfile.role === "Doctor" && (
                   <AvatarFallback>
                     {activeProfile.data.firstName[0] +

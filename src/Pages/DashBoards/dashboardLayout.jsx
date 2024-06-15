@@ -12,6 +12,7 @@ import {
 } from "../../assets/icons/icons";
 import InfoBar from "../../components/infobar";
 import { health } from "../../assets/Apis/assets";
+import { Building2, HandCoins, Users } from "lucide-react";
 
 const DashboardLayout = () => {
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,6 @@ const DashboardLayout = () => {
   const { activeProfile } = useContext(userContext);
 
   useEffect(() => {
-    
     if (activeProfile != null) {
       //if active profile!=null then i've got a response from loadMe whether data=user or data=false
       console.log("here" + activeProfile.data);
@@ -30,7 +30,6 @@ const DashboardLayout = () => {
       }
     }
   }, [activeProfile]);
-
 
   const links = [
     {
@@ -63,12 +62,46 @@ const DashboardLayout = () => {
       });
       break;
     }
+
+    case "Assurance": {
+      links.push({
+        text: "Plans",
+        url: "/dashboard/plans",
+        icon: <ShieldIcon className="h-6 w-6" />,
+      });
+      links.push({
+        text: "Refund Requests",
+        url: "/dashboard/refundRequests",
+        icon: <HandCoins className="h-6 w-6" />,
+      });
+      break;
+    }
+
+    case "Admin": {
+      links.push({
+        text: "Companies",
+        url: "/dashboard/companies",
+        icon: <Building2 className="h-6 w-6" />,
+      });
+      links.push({
+        text: "Doctors",
+        url: "/dashboard/doctors",
+        icon: <UsersIcon className="h-6 w-6" />,
+      });
+      links.push({
+        text: "Plans",
+        url: "/dashboard/plans",
+        icon: <ShieldIcon className="h-6 w-6" />,
+      });
+      
+    }
   }
   links.push({
     text: "Setting",
     url: "/dashboard/settings",
     icon: <SettingsIcon className="h-5 w-5" />,
   });
+
 
   return !loading ? (
     <div className="flex h-screen overflow-hidden ">

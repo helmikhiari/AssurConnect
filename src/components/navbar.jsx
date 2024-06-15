@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { useContext } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { userContext } from "../Context/userContext";
 import Loading from "./loading";
 import { AvatarImage, AvatarFallback, Avatar } from "@/components/ui/avatar";
@@ -12,14 +12,22 @@ import {
   DropdownMenuContent,
   DropdownMenu,
 } from "@/components/ui/dropdown-menu";
+import Logo from '../assets/images/logoWhite.svg'
+import Logo2 from '../assets/images/logo_transparent.png'
 export default function NavBar() {
   const { activeProfile,logOut } = useContext(userContext);
+  const location=useLocation()
   const active = "text-md font-bold underline";
   const unactive = "text-sm font-medium hover:underline";
   return activeProfile != null ? (
     <header className="bg-[#272643] text-gray-50 px-4 md:px-6 h-auto flex items-center flex-col sm:flex-row sm:h-16">
       <NavLink className="flex items-center gap-2 bg-transparent pb-5 sm:pb-0">
-        <MountainIcon className="h-6 w-6" />
+        <img src={Logo2} alt="logo"
+                style={{   
+                  objectFit: "contain",
+                }}   
+                className="w-8"
+                />
         <span className="text-lg font-semibold ">AssurConnect</span>
       </NavLink>
       <nav className="sm:ml-auto flex items-center  sm:gap-6 flex-col sm:flex-row space-y-3 sm:space-y-0">
@@ -51,14 +59,15 @@ export default function NavBar() {
             className="bg-transparent hover:bg-white hover:text-[#272643] border-none flex justify-center"
             variant="outline"
           >
-            <NavLink to="/login">Login</NavLink>
+            {location.pathname!=="/login"?<NavLink to="/login">Login</NavLink>:
+            <NavLink to="/signup">SignUp</NavLink>}
           </Button>
         )}
         {activeProfile?.data !== false && 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Avatar className="h-12 w-12 text-darkblue cursor-pointer">
-                <AvatarImage src={"imgPatient"} />
+                <AvatarImage src={activeProfile.data.picture||activeProfile.data.logo} />
                 {activeProfile.role === "Doctor" && (
                   <AvatarFallback>
                     {activeProfile.data.firstName[0] +

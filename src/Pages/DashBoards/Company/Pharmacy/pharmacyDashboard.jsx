@@ -35,6 +35,8 @@ import { isPositiveInteger, isValidPrice } from "../../../../assets/functions";
 import classNames from "classnames";
 import { API_BASE } from "../../../../../env";
 import AlertModal from "../../../../components/alertModal";
+import { LineChart } from "@mui/x-charts";
+import { data } from "autoprefixer";
 let checkedMeds = [];
 function PharmacyDashboard() {
   const [disableCheckBox, setDisableCheckBox] = useState(false);
@@ -43,6 +45,22 @@ function PharmacyDashboard() {
   const [success, setSuccess] = useState(false);
   const [sessionToken, setSessionToken] = useState();
   const token = localStorage.getItem("token");
+  
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight);
+
+  const updateDimensions = () => {
+    setWidth(window.innerWidth);
+    setHeight(window.innerHeight);
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateDimensions);
+    return () => {
+      window.removeEventListener('resize', updateDimensions);
+    };
+  }, []);
+
 
   const handleClose = () => {
     setPrescription(null);
@@ -329,7 +347,11 @@ function PharmacyDashboard() {
       </div>
     );
   };
-
+  const pData = [7000, 9500, 8000, 10500, 9200, 7500, 8500,5000,7000,7900,8900,10000]; // Pharmacy earnings for user 2
+  const xLabels = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
   return (
     <div>
       <main className="flex-1  p-6 space-y-4">
@@ -357,6 +379,15 @@ function PharmacyDashboard() {
           </DashboardCard>
         </div>
         <PrescriptionLookup />
+        <LineChart
+ series={[
+  { data: pData, label: 'Earnings',color:"#272643",area:true },
+]}
+xAxis={[{ scaleType: 'point', data: xLabels }]}
+  
+  width={width-width*0.2}
+  height={300}
+/>
         <AlertModal
           title={"Prescription successfully served! "}
           buttonTitle={"DISMISS"}

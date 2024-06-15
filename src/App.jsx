@@ -4,8 +4,10 @@ import Signup from "./Pages/Auth/signup.jsx";
 import "./App.css";
 import {
   createBrowserRouter,
+  Outlet,
   RouterProvider,
   useNavigate,
+  
 } from "react-router-dom";
 import RootLayout from "./rootLayout";
 import AboutUs from "./Pages/Home/about.jsx";
@@ -22,12 +24,21 @@ import Unauthorized from "./Pages/unauthorized.jsx";
 import ProtectedRoute from "./components/protectedRoute.jsx";
 import MakeApp from "./Pages/DashBoards/Doctor/makeApp.jsx";
 import Employees from "./Pages/DashBoards/Company/Regular Company/employees.jsx";
-import Plans from "./Pages/DashBoards/Company/Regular Company/plans.jsx";
+
 import AssuranceDetails from "./Pages/DashBoards/Company/Regular Company/assuranceDetails.jsx";
 import ServerDown from "./Pages/serverDown.jsx";
 import EditEmployee from "./Pages/DashBoards/Company/Regular Company/editEmployee.jsx";
 import ManagePlan from "./Pages/DashBoards/Company/Regular Company/managePlan.jsx";
 import { health } from "./assets/Apis/assets.js";
+import Plans from "./Pages/DashBoards/Company/plans.jsx";
+import RefundRequests from "./Pages/DashBoards/Company/Assurance/refund.jsx";
+import EmployeClaim from "./Pages/DashBoards/Company/Regular Company/employeClaims.jsx";
+import AdminLogin from "./Pages/Admin/login.jsx";
+import AdminDashboard from "./Pages/Admin/adminDashboard.jsx";
+import Users from "./Pages/Admin/doctors.jsx";
+import Doctors from "./Pages/Admin/doctors.jsx";
+import Companies from "./Pages/Admin/companies.jsx";
+import EditDoctor from "./Pages/Admin/editDoctor.jsx";
 
 export default function App() {
   const healthCheck = async () => {
@@ -65,6 +76,7 @@ export default function App() {
           path: "/login",
           element: <Login />,
         },
+
         {
           path: "/about",
           element: <AboutUs />,
@@ -89,6 +101,7 @@ export default function App() {
           path: "/serverDown",
           element: <ServerDown />,
         },
+        
       ],
     },
     {
@@ -134,9 +147,12 @@ export default function App() {
         {
           path: "/dashboard/plans",
           element: (
-            <ProtectedRoute allowedRole="Company" role={activeProfile?.role}>
+            <ProtectedRoute
+              allowedRole={["Company", "Assurance","Admin"]}
+              role={activeProfile?.role}
+            >
               <Plans />
-            </ProtectedRoute> 
+            </ProtectedRoute>
           ),
         },
         {
@@ -163,13 +179,69 @@ export default function App() {
             </ProtectedRoute>
           ),
         },
-
+        {
+          path: "/dashboard/refundRequests",
+          element: (
+            <ProtectedRoute allowedRole="Assurance" role={activeProfile?.role}>
+              <RefundRequests />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/employeClaim",
+          element: (
+            <ProtectedRoute allowedRole="Company" role={activeProfile?.role}>
+              <EmployeClaim />
+            </ProtectedRoute>
+          ),
+        },
         {
           path: "/dashboard/unauthorized",
           element: <Unauthorized />,
         },
+        {
+          path: "/dashboard/users",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <Users />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/doctors",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <Doctors />
+            </ProtectedRoute>
+          ),
+          
+        },
+        {
+          path: "/dashboard/doctors/editDoctor",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <EditDoctor />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/companies",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <Companies />
+            </ProtectedRoute>
+          ),
+        },
+        
       ],
     },
+    { 
+      path:"/adminLogin",
+      element: <AdminLogin />,
+    },
+        
+      
+    
   ]);
 
   return (

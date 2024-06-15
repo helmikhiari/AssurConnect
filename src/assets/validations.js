@@ -279,7 +279,6 @@ export function validateEditProfileDoctor(data)
     bio: "Please provide a bio with at least 20 characters",
     firstName:"Please provide a valid FirstName",
     lastName:"Please provide a valid LastName",
-    gender:"Gender is required",
     experience:"Please provide a valid Experience",
     speciality:"Please provide a valid Speciality",
     price:"Please provide a valid Price"
@@ -296,10 +295,6 @@ export function validateEditProfileDoctor(data)
    if (data.hasOwnProperty("address")&&!isValid(data.address,6))
     {
       errors.address=messages.address
-    }
-   if (!data.hasOwnProperty("gender"))
-    {
-      errors.gender=messages.gender;
     }
    if (data.hasOwnProperty("speciality")&&!isValid(data.speciality,4))
     {
@@ -451,3 +446,114 @@ if (!regex.test(search)) {
 
 return true;
 }
+
+
+export function validateAddPlan(formData)
+{ const errors = {};
+
+  const errorMessages = {
+    title: {
+      required: "Please provide a title for the assurance plan.",
+      maxLength: "The title cannot exceed 50 characters. Please shorten it."
+    },
+    bio: {
+      required: "Please provide a brief bio for the assurance plan.",
+      minLength: "The bio should be at least 10 characters long. Please provide more details."
+    },
+    description: {
+      required: "Please provide a detailed description of the assurance plan.",
+      minLength: "The description should be at least 50 characters long. Please elaborate."
+    },
+    price: {
+      required: "Please specify the price for the assurance plan.",
+      pattern: "Please provide a valid price in the format (e.g., 99.99)."
+    },
+    duration: {
+      required: "Please specify the duration of the assurance plan.",
+      pattern: "Please enter a valid number for the duration (e.g., 30 for 30 days)."
+    },
+    cover: {
+      required: "Please provide the cover amount for the assurance plan.",
+      pattern: "Please enter a valid number for the cover amount."
+    },
+    termsAndConditions: {
+      required: "Please provide the terms and conditions for the assurance plan.",
+      minLength: "Terms and conditions should be at least 50 characters long. Please add more information."
+    },
+    coverageDetails: {
+      required: "Please provide the coverage details of the assurance plan.",
+      minLength: "Coverage details should be at least 30 characters long. Please add more information."
+    },
+    exclusions: {
+      required: "Please specify any exclusions for the assurance plan.",
+      minLength: "Exclusions must be at least 10 characters long. Please add more details."
+    },
+    numberOfUsers: {
+      required: "Please specify the number of users for the assurance plan.",
+      pattern: "Please provide a valid whole number for the number of users."
+    }
+  };
+
+  if (!formData.title) {
+    errors.title = errorMessages.title.required;
+  } else if (formData.title.length > 50) {
+    errors.title = errorMessages.title.maxLength;
+  }
+
+  if (!formData.bio) {
+    errors.bio = errorMessages.bio.required;
+  } else if (formData.bio.length < 10) {
+    errors.bio = errorMessages.bio.minLength;
+  }
+
+  if (!formData.description) {
+    errors.description = errorMessages.description.required;
+  } else if (formData.description.length < 50) {
+    errors.description = errorMessages.description.minLength;
+  }
+
+  if (!formData.price) {
+    errors.price = errorMessages.price.required;
+  } else if (!/^\d+(\.\d{1,2})?$/.test(formData.price)) {
+    errors.price = errorMessages.price.pattern;
+  }
+
+  if (!formData.duration) {
+    errors.duration = errorMessages.duration.required;
+  } else if (!/^\d+$/.test(formData.duration)) {
+    errors.duration = errorMessages.duration.pattern;
+  }
+
+  if (!formData.cover) {
+    errors.cover = errorMessages.cover.required;
+  } else if (isNaN(formData.cover) || formData.cover <= 0) {
+    errors.cover = errorMessages.cover.pattern;
+  }
+
+  if (!formData.termsAndConditions) {
+    errors.termsAndConditions = errorMessages.termsAndConditions.required;
+  } else if (formData.termsAndConditions.length < 50) {
+    errors.termsAndConditions = errorMessages.termsAndConditions.minLength;
+  }
+
+  if (!formData.coverageDetails) {
+    errors.coverageDetails = errorMessages.coverageDetails.required;
+  } else if (formData.coverageDetails.length < 30) {
+    errors.coverageDetails = errorMessages.coverageDetails.minLength;
+  }
+
+  if (!formData.exclusions) {
+    errors.exclusions = errorMessages.exclusions.required;
+  } else if (formData.exclusions.length < 10) {
+    errors.exclusions = errorMessages.exclusions.minLength;
+  }
+
+  if (!formData.numberOfUsers) {
+    errors.numberOfUsers = errorMessages.numberOfUsers.required;
+  } else if (!/^\d+$/.test(formData.numberOfUsers)) {
+    errors.numberOfUsers = errorMessages.numberOfUsers.pattern;
+  }
+
+  return errors;
+
+  }

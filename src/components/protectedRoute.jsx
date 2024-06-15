@@ -6,16 +6,18 @@ export default function ProtectedRoute({ role, allowedRole, children }) {
   const navigate = useNavigate();
   const [loading,setLoading]=useState(true)
   useEffect(() => {
-    console.log("role"+role)
-    
-      if (role !== allowedRole&&role&&allowedRole) {
-        navigate("dashboard/unauthorized");
-        // window.location.reload()
-      } 
-      else if (role)
+    console.log("role: " + role);
+
+    if (role && allowedRole) {
+      if (!allowedRole.includes(role)) {
+        navigate("/dashboard/unauthorized");
+      } else {
+        setLoading(false);
+      }
+    } else if (role) {
       setLoading(false);
-    
-  }, [role]);
+    }
+  }, [role, allowedRole, navigate]);
   
   
 return(

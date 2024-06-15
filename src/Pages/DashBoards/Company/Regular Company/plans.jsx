@@ -84,10 +84,7 @@ function Plans() {
               </h3>
               <p className="mt-2 text-gray-900 text-left ">{plan?.bio}</p>
             </div>
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-lg font-semibold text-cyan-500 ">
-                $99/mo
-              </span>
+            <div className="mt-4 flex items-center justify-center">
               <Button
                 className="group-hover:bg-darkblue group-hover:text-white"
                 size="sm"
@@ -147,6 +144,8 @@ function Plans() {
     );
   };
 
+
+  
   const BrowsePlans = () => {
     const [min, setMin] = useState(0);
     const [max, setMax] = useState(0);
