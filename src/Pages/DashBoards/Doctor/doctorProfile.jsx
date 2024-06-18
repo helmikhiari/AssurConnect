@@ -20,7 +20,6 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { stringToDate } from "../../../assets/functions";
-
 import { validateEditProfileDoctor } from "../../../assets/validations";
 import { updateDoctor } from "../../../assets/Apis/assets";
 import AlertModal from "./../../../components/alertModal";

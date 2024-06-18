@@ -39,6 +39,11 @@ import Users from "./Pages/Admin/doctors.jsx";
 import Doctors from "./Pages/Admin/doctors.jsx";
 import Companies from "./Pages/Admin/companies.jsx";
 import EditDoctor from "./Pages/Admin/editDoctor.jsx";
+import EditCompany from "./Pages/Admin/editCompany.jsx";
+import Assurances from "./Pages/Admin/assurances.jsx";
+import EditAssurance from "./Pages/Admin/editAssurance.jsx";
+import Pharmacies from "./Pages/Admin/pharmacies.jsx";
+import EditPharmacy from "./Pages/Admin/editPharmacy.jsx";
 
 export default function App() {
   const healthCheck = async () => {
@@ -232,7 +237,46 @@ export default function App() {
             </ProtectedRoute>
           ),
         },
-        
+        {
+          path: "/dashboard/companies/editCompany",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <EditCompany />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/assurances",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <Assurances />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/assurances/editAssurance",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <EditAssurance />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/pharmacies",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <Pharmacies />
+            </ProtectedRoute>
+          ),
+        },
+        {
+          path: "/dashboard/pharmacies/editPharmacy",
+          element: (
+            <ProtectedRoute allowedRole="Admin" role={activeProfile?.role}>
+              <EditPharmacy />
+            </ProtectedRoute>
+          ),
+        },
       ],
     },
     { 

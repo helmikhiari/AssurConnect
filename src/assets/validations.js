@@ -281,7 +281,8 @@ export function validateEditProfileDoctor(data)
     lastName:"Please provide a valid LastName",
     experience:"Please provide a valid Experience",
     speciality:"Please provide a valid Speciality",
-    price:"Please provide a valid Price"
+    price:"Please provide a valid Price",
+    
   }
   console.log("data",data)
    if (data.hasOwnProperty("firstName")&& !isValid(data.firstName,2))
@@ -556,4 +557,466 @@ export function validateAddPlan(formData)
 
   return errors;
 
+}
+
+export function validateAddAssuranceAdmin(formData) {
+  const errors = {};
+
+  const errorMessages = {
+    name: {
+      required: "Please provide a name for the assurance."
+    },
+    email: {
+      required: "Please provide an email address.",
+      pattern: "Please provide a valid email address."
+    },
+    password: {
+      required: "Please provide a password.",
+      minLength: "Password must be at least 8 characters long."
+    },
+    confirmPassword: {
+      required: "Please confirm your password.",
+      match: "Passwords do not match."
+    },
+    address: {
+      required: "Please provide an address."
+    },
+    bio: {
+      required: "Please provide a bio.",
+      minLength: "Bio must be at least 10 characters long."
+    },
+    founded: {
+      required: "Please provide the founding year.",
+      pattern: "The founding year must be a valid 4-digit number."
+    },
+    taxNumber: {
+      required: "Please provide a tax code.",
+      pattern: "The tax code must be exactly 9 digits."
+    },
+    description: {
+      required: "Please provide a description.",
+      minLength: "Description should be at least 50 characters long."
+    }
+  };
+
+  if (!formData.name) {
+    errors.name = errorMessages.name.required;
   }
+
+  if (!formData.email) {
+    errors.email = errorMessages.email.required;
+  } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+    errors.email = errorMessages.email.pattern;
+  }
+
+  if (!formData.password) {
+    errors.password = errorMessages.password.required;
+  } else if (formData.password.length < 8) {
+    errors.password = errorMessages.password.minLength;
+  }
+
+  if (!formData.confirmPassword) {
+    errors.confirmPassword = errorMessages.confirmPassword.required;
+  } else if (formData.password !== formData.confirmPassword) {
+    errors.confirmPassword = errorMessages.confirmPassword.match;
+  }
+
+  if (!formData.address) {
+    errors.address = errorMessages.address.required;
+  }
+
+  if (!formData.bio) {
+    errors.bio = errorMessages.bio.required;
+  } else if (formData.bio.length < 10) {
+    errors.bio = errorMessages.bio.minLength;
+  }
+
+  if (!formData.founded) {
+    errors.founded = errorMessages.founded.required;
+  } else if (!/^\d{4}$/.test(formData.founded)) {
+    errors.founded = errorMessages.founded.pattern;
+  }
+
+  if (!formData.taxNumber) {
+    errors.taxNumber = errorMessages.taxNumber.required;
+  } else if (!/^\d{9}$/.test(formData.taxNumber)) {
+    errors.taxNumber = errorMessages.taxNumber.pattern;
+  }
+
+  if (!formData.description) {
+    errors.description = errorMessages.description.required;
+  } else if (formData.description.length < 50) {
+    errors.description = errorMessages.description.minLength;
+  }
+ 
+  return errors;
+}
+
+
+export function validateUpdateAssuranceAdmin(formData,type) {
+  const errors = {};
+  const errorMessages = {
+    name: "Please provide a valid "+type+" Name (at least 2 characters)",
+    email: "Please provide a valid email address",
+    password: "Password must be at least 8 characters long",
+    confirmPassword: "Passwords do not match",
+    address: "Please provide a valid address",
+    founded: "Please provide a valid founded year",
+    codeTax: "Tax Code must be 9 characters long",
+  };
+  
+  if (formData.hasOwnProperty('name')) {
+      if (!isValid(formData.name, 2)) {
+          errors.name = errorMessages.name;
+      }
+  }
+
+  if (formData.hasOwnProperty('email')) {
+      if (!isValid(formData.email, 5) || !formData.email.includes('@')) {
+          errors.email = errorMessages.email;
+      }
+  }
+
+  if (formData.hasOwnProperty('password')) {
+    const errorsPassword=isStrongPassword(formData.password)
+      if (errorsPassword!="") {
+          errors.password = errorMessages.errorsPassword;
+      }
+      else if ((formData.password!==formData.confirmPassword))
+        {
+          errors.password = errorMessages.confirmPassword;
+        }
+    }
+
+
+
+  if (formData.hasOwnProperty('address')) {
+      if (!isValid(formData.address, 5)) {
+          errors.address = errorMessages.address;
+      }
+  }
+
+  if (formData.hasOwnProperty('founded')) {
+      if (!formData.founded || isNaN(formData.founded) || (formData.founded.length!=4)) {
+          errors.founded = errorMessages.founded;
+      }
+  }
+
+  if (formData.hasOwnProperty('taxNumber')) {
+      if (!isValid(formData.taxNumber, 8)) {
+          errors.taxNumber = errorMessages.codeTax;
+      }
+  }
+  console.log(errors)
+  return errors;
+}
+
+
+export function validateAddCompanyAdmin(formData,type) {
+  const errors = {};
+
+  const errorMessages = {
+    name: {
+      required: "Please provide a name for the "+type+"."
+    },
+    email: {
+      required: "Please provide an email address.",
+      pattern: "Please provide a valid email address."
+    },
+    password: {
+      required: "Please provide a password.",
+      minLength: "Password must be at least 8 characters long."
+    },
+    confirmPassword: {
+      required: "Please confirm your password.",
+      match: "Passwords do not match."
+    },
+    address: {
+      required: "Please provide an address."
+    },
+    founded: {
+      required: "Please provide the founding year.",
+      pattern: "The founding year must be a valid 4-digit number."
+    },
+    taxNumber: {
+      required: "Please provide a tax code.",
+      pattern: "The tax code must be exactly 9 digits."
+    },
+    description: {
+      required: "Please provide a description.",
+      minLength: "Description should be at least 50 characters long."
+    }
+  };
+
+  if (!formData.name) {
+    errors.name = errorMessages.name.required;
+  }
+
+  if (!formData.email) {
+    errors.email = errorMessages.email.required;
+  } else if (!/^\S+@\S+\.\S+$/.test(formData.email)) {
+    errors.email = errorMessages.email.pattern;
+  }
+
+  if (!formData.password) {
+    errors.password = errorMessages.password.required;
+  } else if (formData.password.length < 8) {
+    errors.password = errorMessages.password.minLength;
+  }
+
+  if (!formData.confirmPassword) {
+    errors.confirmPassword = errorMessages.confirmPassword.required;
+  } else if (formData.password !== formData.confirmPassword) {
+    errors.confirmPassword = errorMessages.confirmPassword.match;
+  }
+
+  if (!formData.address) {
+    errors.address = errorMessages.address.required;
+  }
+
+
+  if (!formData.founded) {
+    errors.founded = errorMessages.founded.required;
+  } else if (!/^\d{4}$/.test(formData.founded)) {
+    errors.founded = errorMessages.founded.pattern;
+  }
+
+  if (!formData.taxNumber) {
+    errors.taxNumber = errorMessages.taxNumber.required;
+  } else if (!/^\d{9}$/.test(formData.taxNumber)) {
+    errors.taxNumber = errorMessages.taxNumber.pattern;
+  }
+
+  if (!formData.description) {
+    errors.description = errorMessages.description.required;
+  } else if (formData.description.length < 30) {
+    errors.description = errorMessages.description.minLength;
+  }
+ 
+  return errors;
+}
+
+export function validateUpdateDoctorAdmin(formData) {
+  
+
+  const errors = {};
+
+  const errorMessages = {
+    firstName: {
+      minLength: "First Name must be at least 2 characters long."
+    },
+    lastName: {
+      minLength: "Last Name must be at least 2 characters long."
+    },
+    address: {
+      minLength: "Address must be at least 6 characters long."
+    },
+    speciality: {
+      minLength: "Speciality must be at least 4 characters long."
+    },
+    experience: {
+      pattern: "Experience must be a positive number."
+    },
+    price: {
+      pattern: "Price must be a positive number."
+    },
+    email: {
+      pattern: "Please provide a valid Email address."
+    },
+    cin: {
+      pattern: "Please provide a valid CIN (8-15 alphanumeric characters)."
+    },
+    password: {
+      minLength: "Password must be at least 8 characters long."
+    },
+    confirmPassword: {
+      match: "Passwords do not match."
+    }
+  };
+
+  if (formData.hasOwnProperty('firstName') && formData.firstName.length < 2) {
+    errors.firstName = errorMessages.firstName.minLength;
+  }
+
+  if (formData.hasOwnProperty('lastName') && formData.lastName.length < 2) {
+    errors.lastName = errorMessages.lastName.minLength;
+  }
+
+  if (formData.hasOwnProperty('address') && formData.address.length < 6) {
+    errors.address = errorMessages.address.minLength;
+  }
+
+  if (formData.hasOwnProperty('speciality') && formData.speciality.length < 4) {
+    errors.speciality = errorMessages.speciality.minLength;
+  }
+
+  if (formData.hasOwnProperty('experience') && (isNaN(formData.experience) || parseInt(formData.experience) < 0)) {
+    errors.experience = errorMessages.experience.pattern;
+  }
+
+  if (formData.hasOwnProperty('price') && (isNaN(formData.price) || parseFloat(formData.price) < 0)) {
+    errors.price = errorMessages.price.pattern;
+  }
+
+  if (formData.hasOwnProperty('email') && Object.keys(validateMail(formData.email)).length!=0) {
+    errors.email = validateMail(formData.email);
+  }
+
+  if (formData.hasOwnProperty('cin') && !isValidCin(formData.cin)) {
+    errors.cin = errorMessages.cin.pattern;
+  }
+
+  if (formData.hasOwnProperty('password')) {
+    const errorsPassword=isStrongPassword(formData.password)
+      if (errorsPassword!="") {
+          errors.password = errorMessages.errorsPassword;
+      }
+      else if ((formData.password!==formData.confirmPassword))
+        {
+          errors.password = errorMessages.confirmPassword;
+        }
+    }
+
+  return errors;
+}
+
+
+
+export function validateDoctorFormAdmin(formData) {
+  const errors = {};
+
+  const errorMessages = {
+    lastName: {
+      required: "Please provide a Last Name.",
+      minLength: "Last Name must be at least 2 characters long."
+    },
+    firstName: {
+      required: "Please provide a First Name.",
+      minLength: "First Name must be at least 2 characters long."
+    },
+    email: {
+      required: "Please provide an email address.",
+      pattern: "Please provide a valid email address."
+    },
+    cin: {
+      required: "Please provide a CIN (8 digits).",
+      pattern: "CIN must be exactly 8 digits."
+    },
+    password: {
+      required: "Please provide a password.",
+      minLength: "Password must be at least 8 characters long."
+    },
+    confirmPassword: {
+      required: "Please confirm your password.",
+      match: "Passwords do not match."
+    },
+    birthDate: {
+      required: "Please provide a Birth Date."
+    },
+    gender: {
+      required: "Please select a Gender."
+    },
+    address: {
+      required: "Please provide an Address.",
+      minLength: "Address must be at least 6 characters long."
+    },
+    speciality: {
+      required: "Please provide a Specialty.",
+      minLength: "Specialty must be at least 4 characters long."
+    },
+    experience: {
+      required: "Please provide Experience.",
+      pattern: "Experience must be a positive number."
+    },
+    price: {
+      required: "Please provide a Price.",
+      pattern: "Price must be a positive number."
+    },
+    bio: {
+      required: "Please provide a Bio.",
+      minLength: "Bio must be at least 20 characters long."
+    }
+  };
+
+  if (formData.hasOwnProperty("lastName")) {
+    if (!formData.lastName || !isValid(formData.lastName, 2)) {
+      errors.lastName = formData.lastName ? errorMessages.lastName.minLength : errorMessages.lastName.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("firstName")) {
+    if (!formData.firstName || !isValid(formData.firstName, 2)) {
+      errors.firstName = formData.firstName ? errorMessages.firstName.minLength : errorMessages.firstName.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("email")) {
+    if (!formData.email) {
+      errors.email = errorMessages.email.required;
+    } else if (!isValidEmail(formData.email)) {
+      errors.email = errorMessages.email.pattern;
+    }
+  }
+
+  if (formData.hasOwnProperty("cin")) {
+    if (!formData.cin || !isValidCin(formData.cin)) {
+      errors.cin = formData.cin ? errorMessages.cin.pattern : errorMessages.cin.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("password")) {
+    if (!formData.password || formData.password.length < 8) {
+      errors.password = formData.password ? errorMessages.password.minLength : errorMessages.password.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("confirmPassword")) {
+    if (!formData.confirmPassword || formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = errorMessages.confirmPassword.match;
+    }
+  }
+
+  if (formData.hasOwnProperty("birthDate")) {
+    if (!formData.birthDate) {
+      errors.birthDate = errorMessages.birthDate.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("gender")) {
+    if (!formData.gender) {
+      errors.gender = errorMessages.gender.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("address")) {
+    if (!formData.address || !isValid(formData.address, 6)) {
+      errors.address = formData.address ? errorMessages.address.minLength : errorMessages.address.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("speciality")) {
+    if (!formData.speciality || !isValid(formData.speciality, 4)) {
+      errors.speciality = formData.speciality ? errorMessages.speciality.minLength : errorMessages.speciality.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("experience")) {
+    if (!formData.experience || isNaN(formData.experience) || parseInt(formData.experience) < 0) {
+      errors.experience = formData.experience ? errorMessages.experience.pattern : errorMessages.experience.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("price")) {
+    if (!formData.price || isNaN(formData.price) || parseFloat(formData.price) < 0) {
+      errors.price = formData.price ? errorMessages.price.pattern : errorMessages.price.required;
+    }
+  }
+
+  if (formData.hasOwnProperty("bio")) {
+    if (!formData.bio || formData.bio.length < 20) {
+      errors.bio = formData.bio ? errorMessages.bio.minLength : errorMessages.bio.required;
+    }
+  }
+
+  return errors;
+}

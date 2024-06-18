@@ -12,7 +12,7 @@ import {
   AlertDialogContent,
   AlertDialog,
 } from "@/components/ui/alert-dialog";
-import { CloudIcon, LogOutIcon, MenuIcon } from "../assets/icons/icons";
+import {  LogOutIcon, MenuIcon } from "../assets/icons/icons";
 import { userContext } from "../Context/userContext";
 import  Logo  from "../assets/images/logo_transparent.png";
 export default function SideBar({ links }) {

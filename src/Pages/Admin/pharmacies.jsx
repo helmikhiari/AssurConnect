@@ -29,10 +29,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { TabsTrigger, TabsList, Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useRef, useState } from "react";
-import {
-  validateAddPlan,
-  validateDoctorFormAdmin,
-} from "../../assets/validations";
 import { addPlanAssurance } from "../../assets/Apis/assets";
 import AlertModal from "../../components/alertModal";
 import {
@@ -55,35 +51,30 @@ import {
 import CustomLoading from "../../components/customLoading";
 import { useNavigate } from "react-router-dom";
 import {
-  addDoctorAdmin,
-  deleteDoctorAdmin,
-  getDoctorAdmin,
-  getDoctors,
-  getDoctorsCount,
-  getDoctorssSearchCount,
+  addPharmacyAdmin,
+  deletePharmacyAdmin,
+  getPharmacies,
+  getPharmaciesCount,
+  getPharmaciesSearchCount,
 } from "../../assets/Apis/admin";
+import { validateAddCompanyAdmin } from "../../assets/validations";
 
-export default function Doctors() {
+export default function Pharmacies() {
   const TOKEN = localStorage.getItem("token");
 
-  const AddDoctor = () => {
+  const AddPharmacy = () => {
     const [errors, setErrors] = useState({});
     const [showDialog, setShowDialog] = useState(false);
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [formData, setFormData] = useState({
-      firstName: "",
-      lastName: "",
-      speciality: "",
-      experience: "",
-      price: "",
+      name: "",
       email: "",
-      cin: "",
       password: "",
       confirmPassword: "",
-      gender: "",
-      birthDate: "",
-      bio: "",
       address: "",
+      founded: "",
+      taxNumber: "",
+      description: "",
     });
 
     const hideDialog = () => setShowDialog(false);
@@ -95,16 +86,17 @@ export default function Doctors() {
       });
     };
 
-    const addDoctorr = async (e) => {
+    const addPharmacyy = async (e) => {
       e.preventDefault();
       setButtonDisabled(true);
-      const validation = validateDoctorFormAdmin(formData);
+      const validation = validateAddCompanyAdmin(formData, "pharmacy");
       if (Object.keys(validation).length === 0) {
-        const response = await addDoctorAdmin(TOKEN, formData);
-        if (response && !response.cin && !response.email) {
+        const response = await addPharmacyAdmin(TOKEN, formData);
+
+        if (response && !response.name && !response.email) {
           setShowDialog(true);
           window.location.reload();
-        } else {
+        } else if (response !== false) {
           setErrors(response);
         }
       } else {
@@ -113,47 +105,30 @@ export default function Doctors() {
       setButtonDisabled(false);
     };
 
-    const handleGenderChange = (e) => setFormData({ ...formData, gender: e });
-
     return (
       <>
-        <form className="flex justify-center text-left" onSubmit={addDoctorr}>
+        <form className="flex justify-center text-left" onSubmit={addPharmacyy}>
           <Card className="w-full max-w-4xl drop-shadow-xl rounded-t-2xl">
             <CardHeader className="bg-darkblue text-white rounded-t-2xl mb-5">
-              <CardTitle>Add A Doctor</CardTitle>
+              <CardTitle>Add A Pharmacy</CardTitle>
               <CardDescription>
-                Fill out the details to add a doctor.
+                Fill out the details to add a pharmacy.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="last-name">Last Name</Label>
+                  <Label htmlFor="name">Pharmacy Name</Label>
                   <Input
-                    id="last-name"
-                    placeholder="Enter doctor last name"
-                    value={formData.lastName}
+                    id="name"
+                    placeholder="DunDill"
+                    value={formData.name}
                     onChange={handleChange}
-                    name="lastName"
+                    name="name"
                   />
-                  {errors.lastName && (
+                  {errors.name && (
                     <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.lastName}
-                    </span>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="first-name">First Name</Label>
-                  <Input
-                    id="first-name"
-                    placeholder="Enter doctor first name"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    name="firstName"
-                  />
-                  {errors.firstName && (
-                    <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.firstName}
+                      {errors.name}
                     </span>
                   )}
                 </div>
@@ -174,21 +149,7 @@ export default function Doctors() {
                     </span>
                   )}
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="cin">CIN</Label>
-                  <Input
-                    id="cin"
-                    name="cin"
-                    placeholder="01234567"
-                    value={formData.cin}
-                    onChange={handleChange}
-                  />
-                  {errors.cin && (
-                    <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.cin}
-                    </span>
-                  )}
-                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="password">Password</Label>
                   <Input
@@ -222,46 +183,11 @@ export default function Doctors() {
                   )}
                 </div>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="birthdate">Birth Date</Label>
-                <Input
-                  value={formData.birthDate}
-                  id="birthdate"
-                  type="date"
-                  onChange={handleChange}
-                  name="birthDate"
-                />
-                {errors.birthDate && (
-                  <span className="text-red-500 flex justify-start text-sm ">
-                    {errors.birthDate}
-                  </span>
-                )}
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="gender">Gender</Label>
-                <Select
-                  id="gender"
-                  name="gender"
-                  onValueChange={handleGenderChange}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select Gender" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Male">Male</SelectItem>
-                    <SelectItem value="Female">Female</SelectItem>
-                  </SelectContent>
-                </Select>
-                {errors.gender && (
-                  <span className="text-red-500 flex justify-start text-sm ">
-                    {errors.gender}
-                  </span>
-                )}
-              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="address">Address</Label>
                 <Input
-                  value={formData.address}
+                  defaultValue={formData.address}
                   id="address"
                   onChange={handleChange}
                   name="address"
@@ -273,84 +199,70 @@ export default function Doctors() {
                   </span>
                 )}
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="specialty">Specialty</Label>
-                <Input
-                  defaultValue={formData.speciality}
-                  id="specialty"
-                  onChange={handleChange}
-                  name="speciality"
-                  placeholder="General"
-                />
-                {errors.speciality && (
-                  <span className="text-red-500 flex justify-start text-sm ">
-                    {errors.speciality}
-                  </span>
-                )}
-              </div>
 
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="experience">Experience</Label>
+                  <Label htmlFor="founded">Founded</Label>
                   <Input
-                    defaultValue={formData.experience}
-                    id="experience"
+                    id="founded"
                     type="number"
                     onChange={handleChange}
-                    name="experience"
-                    placeholder="8"
+                    name="founded"
+                    placeholder="1950"
                   />
-                  {errors.experience && (
+                  {errors.founded && (
                     <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.experience}
+                      {errors.founded}
                     </span>
                   )}
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
+                  <Label htmlFor="code-tax">Tax Code</Label>
                   <Input
-                    defaultValue={formData.price}
-                    id="price"
-                    type="number"
+                    id="code-tax"
                     onChange={handleChange}
-                    name="price"
-                    placeholder="70"
+                    name="taxNumber"
+                    placeholder="012345678"
                   />
-                  {errors.price && (
+                  {errors.taxNumber && (
                     <span className="text-red-500 flex justify-start text-sm ">
-                      {errors.price}
+                      {errors.taxNumber}
                     </span>
                   )}
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
+                <Label htmlFor="description">Description</Label>
                 <Textarea
                   className="min-h-[100px]"
-                  defaultValue={formData.bio}
-                  id="bio"
+                  defaultValue={formData.description}
+                  id="description"
                   onChange={handleChange}
-                  name="bio"
-                  placeholder="Doctor bio"
+                  name="description"
+                  placeholder="Pharmacy Description"
                 />
-                {errors.bio && (
+                {errors.description && (
                   <span className="text-red-500 flex justify-start text-sm ">
-                    {errors.bio}
+                    {errors.description}
                   </span>
                 )}
               </div>
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="ml-auto bg-darkblue min-w-40 ">
-                Add Doctor
+              <Button
+                type="submit"
+                className="ml-auto bg-darkblue min-w-40 "
+                disabled={buttonDisabled}
+              >
+                Add Pharmacy
               </Button>
             </CardFooter>
           </Card>
         </form>
         <AlertModal
           open={showDialog}
-          title="Doctor Added!"
-          content="Doctor has been successfully Added."
+          title="Pharmacy Added!"
+          content="Pharmacy has been successfully Added."
           onClick={hideDialog}
           buttonTitle="Dismiss"
         />
@@ -358,10 +270,10 @@ export default function Doctors() {
     );
   };
 
-  const Doctor = () => {
+  const Pharmacy = () => {
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const [deleteIndex, setDeleteIndex] = useState();
-    const [doctorsCount, setDoctorsCount] = useState(78);
+    const [PharmaciesCount, setPharmaciesCount] = useState(78);
     const [loadingCount, setLoadingCount] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [search, setSearch] = useState("");
@@ -369,68 +281,67 @@ export default function Doctors() {
     const br = useRef();
     const navigate = useNavigate();
     const [data, setData] = useState();
+    const handlePrev = () => setCurrentPage((prev) => prev - 1);
+    const handleNext = () => setCurrentPage((prev) => prev + 1);
+    const changeDeleteIndex = (index) => setDeleteIndex(index);
+    const toggleShowDeleteDialog = () => setShowDeleteDialog((prev) => !prev);
     const handleDelete = (index) => {
       changeDeleteIndex(index);
       toggleShowDeleteDialog();
     };
-    const changeDeleteIndex = (index) => setDeleteIndex(index);
-    const toggleShowDeleteDialog = () => setShowDeleteDialog((prev) => !prev);
+
+    const deletePharmacy = async () => {
+      const response = await deletePharmacyAdmin(TOKEN, data[deleteIndex].id);
+      if (response) {
+        const updated = [...data];
+        updated.splice(deleteIndex, 1);
+        setData(updated);
+        setPharmaciesCount((prev) => prev - 1);
+        toggleShowDeleteDialog();
+      }
+    };
+
     const handleSearchChange = (e) => setSearch(e.target.value);
+
     const handleSearch = async (e) => {
       e.preventDefault();
-      const count = await getDoctorssSearchCount(TOKEN, currentPage, search);
-      if (count || count === 0) setDoctorsCount(count);
-      const response = await getDoctors(TOKEN, currentPage, search);
+      const count = await getPharmaciesSearchCount(TOKEN, currentPage, search);
+      console.log(count);
+      if (count || count === 0) setPharmaciesCount(count);
+      const response = await getPharmacies(TOKEN, currentPage, search);
       if (response) setData(response);
     };
-
-    const fetchDoctors = async () => {
-      const response = await getDoctors(TOKEN, currentPage, search);
-      if (response) setData(response);
-    };
-
-    const fetchDoctorsCount = async () => {
-      setLoadingCount(true);
-      const response = await getDoctorsCount(TOKEN);
-      if (response) setDoctorsCount(response);
-      setLoadingCount(false);
-    };
-
-    useEffect(() => {
-      fetchDoctorsCount();
-    }, []);
 
     useEffect(() => {
       if (search != "") br.current.click();
     }, [currentPage]);
 
+    const fetchPharmaciesCount = async () => {
+      setLoadingCount(true);
+      const response = await getPharmaciesCount(TOKEN);
+      if (response) setPharmaciesCount(response);
+      setLoadingCount(false);
+    };
+
+    const fetchPharmacies = async () => {
+      const response = await getPharmacies(TOKEN, currentPage, search);
+      if (response) setData(response);
+    };
+
     useEffect(() => {
       if (search === "") {
         setCurrentPage(0);
-        fetchDoctorsCount();
-        fetchDoctors();
+        fetchPharmaciesCount();
+        fetchPharmacies();
       }
     }, [search]);
 
     useEffect(() => {
-      fetchDoctors();
+      fetchPharmacies();
     }, [currentPage]);
 
-    const handlePrev = () => setCurrentPage((prev) => prev - 1);
-    const handleNext = () => setCurrentPage((prev) => prev + 1);
     const handleEditClick = (index) => {
-      navigate("./editDoctor", { state: data[index].id });
-    };
-
-    const deleteDoctor = async (index) => {
-      const response = await deleteDoctorAdmin(TOKEN, data[index].id);
-      if (response) {
-        const updated = [...data];
-        updated.splice(deleteIndex, 1);
-        setData(updated);
-        setDoctorsCount((prev) => prev - 1);
-        toggleShowDeleteDialog();
-      }
+      navigate("./editPharmacy", { state: data[index].id });
     };
 
     return (
@@ -465,16 +376,16 @@ export default function Doctors() {
             <TableHeader>
               <TableRow className="grid grid-cols-5 bg-darkblue hover:bg-darkblue text-white rounded-t-xl px-10 ">
                 <TableHead className="text-left place-content-center">
-                  <p className="pl-5 text-white">Doctor Name</p>
+                  <p className="pl-5 text-white">Pharmacy</p>
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center">
                   Email
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center">
-                  Speciality
+                  Founded
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center">
-                  Number Of Patients
+                  Prescriptions Served
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center pl-[50px]">
                   Actions
@@ -482,33 +393,34 @@ export default function Doctors() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.map((doctor, index) => {
+              {data?.map((pharmacy, index) => {
                 return (
                   <TableRow className="grid grid-cols-5 pl-5" key={index}>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Avatar className=" h-14 w-14 text-darkblue">
-                          <AvatarImage src={doctor.picture} />
+                          <AvatarImage src={pharmacy.logo} />
                           <AvatarFallback className="uppercase">
-                            {doctor.firstName[0]}
-                            {doctor.lastName[0]}
+                            {pharmacy.name[0]}
+                            {pharmacy.name[1]}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="font-medium capitalize">
-                            {doctor.firstName} {doctor.lastName}
+                            {pharmacy.name}
                           </div>
                         </div>
                       </div>
                     </TableCell>
+
                     <TableCell className="flex justify-center items-center w-auto">
-                      {doctor.email}
-                    </TableCell>
-                    <TableCell className="flex justify-center items-center w-auto pr-9">
-                      {doctor.speciality}
+                      {pharmacy.email}
                     </TableCell>
                     <TableCell className="flex justify-center items-center w-auto pr-12">
-                      {doctor.numberOfPatients}
+                      {pharmacy.founded}
+                    </TableCell>
+                    <TableCell className="flex justify-center items-center w-auto pr-12">
+                      {pharmacy.prescriptionsServed}
                     </TableCell>
                     <TableCell className="flex items-center justify-end w-auto gap-5">
                       <Button
@@ -538,10 +450,10 @@ export default function Doctors() {
             <PaginationContent className="flex justify-between px-[80px] bg-gray-50 rounded-b-xl">
               <p className="flex justify-self-end cursor-default font-sm text-sm text-right">
                 {!loadingCount ? (
-                  `${Math.min(currentPage * 5 + 1, doctorsCount)}-${Math.min(
+                  `${Math.min(currentPage * 5 + 1, PharmaciesCount)}-${Math.min(
                     (currentPage + 1) * 5,
-                    doctorsCount
-                  )} of ${doctorsCount}`
+                    PharmaciesCount
+                  )} of ${PharmaciesCount}`
                 ) : (
                   <CustomLoading className="w-7 h-7" />
                 )}
@@ -553,8 +465,8 @@ export default function Doctors() {
                   </PaginationItem>
                 )}
 
-                {Math.min((currentPage + 1) * 5, doctorsCount) !=
-                  doctorsCount && (
+                {Math.min((currentPage + 1) * 5, PharmaciesCount) !=
+                  PharmaciesCount && (
                   <PaginationItem onClick={handleNext}>
                     <PaginationNext />
                   </PaginationItem>
@@ -568,7 +480,7 @@ export default function Doctors() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will Delete this doctor
+                This action cannot be undone. This will Delete this pharmacy
                 permanently from our servers.
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -578,7 +490,7 @@ export default function Doctors() {
               </AlertDialogCancel>
               <AlertDialogAction
                 className="bg-red-500 hover:bg-red-700"
-                onClick={() => deleteDoctor(index)}
+                onClick={deletePharmacy}
               >
                 Delete
               </AlertDialogAction>
@@ -594,29 +506,29 @@ export default function Doctors() {
       <div className="flex-1 transition-all duration-500 ease-in-out">
         <Tabs
           className=" items-center gap-0 transition-all duration-500 ease-in-out"
-          defaultValue="doctors"
+          defaultValue="pharmacy"
         >
           <TabsList className="gap-0 flex w-min">
             <TabsTrigger
               className="transition-all duration-500 ease-in-out data-[state=active]:bg-darkblue text-darkblue data-[state=active]:text-white"
-              value="doctors"
+              value="pharmacy"
             >
-              Doctors
+              Pharmacies
             </TabsTrigger>
             <TabsTrigger
               className="transition-all duration-500 ease-in-out data-[state=active]:bg-darkblue text-darkblue data-[state=active]:text-white"
-              value="add-doctor"
+              value="add-pharmacy"
             >
-              Add Doctor
+              Add Pharmacy
             </TabsTrigger>
           </TabsList>
 
           <main className="flex flex-1  flex-col flex-wrap gap-1 ">
-            <TabsContent value="add-doctor">
-              <AddDoctor />
+            <TabsContent value="add-pharmacy">
+              <AddPharmacy />
             </TabsContent>
-            <TabsContent value="doctors">
-              <Doctor />
+            <TabsContent value="pharmacy">
+              <Pharmacy />
             </TabsContent>
           </main>
         </Tabs>

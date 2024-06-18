@@ -12,7 +12,7 @@ import {
 } from "../../assets/icons/icons";
 import InfoBar from "../../components/infobar";
 import { health } from "../../assets/Apis/assets";
-import { Building2, HandCoins, Users } from "lucide-react";
+import { BriefcaseMedicalIcon, Building2, HandCoins, HandCoinsIcon, Users } from "lucide-react";
 
 const DashboardLayout = () => {
   const [loading, setLoading] = useState(true);
@@ -79,6 +79,11 @@ const DashboardLayout = () => {
 
     case "Admin": {
       links.push({
+        text: "Assurances",
+        url: "/dashboard/assurances",
+        icon: <HandCoinsIcon className="h-6 w-6" />,
+      });
+      links.push({
         text: "Companies",
         url: "/dashboard/companies",
         icon: <Building2 className="h-6 w-6" />,
@@ -89,10 +94,16 @@ const DashboardLayout = () => {
         icon: <UsersIcon className="h-6 w-6" />,
       });
       links.push({
+        text: "Pharmacies",
+        url: "/dashboard/pharmacies",
+        icon: <BriefcaseMedicalIcon className="h-6 w-6" />,
+      });
+      links.push({
         text: "Plans",
         url: "/dashboard/plans",
         icon: <ShieldIcon className="h-6 w-6" />,
       });
+     
       
     }
   }

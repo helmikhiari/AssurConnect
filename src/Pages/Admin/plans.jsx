@@ -8,21 +8,21 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
-    PaginationContent,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-  } from "@/components/ui/pagination";
-  import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-  } from "@/components/ui/alert-dialog";
+  PaginationContent,
+  PaginationItem,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,7 +30,7 @@ import { Button } from "@/components/ui/button";
 import { TabsTrigger, TabsList, Tabs, TabsContent } from "@/components/ui/tabs";
 import { useEffect, useRef, useState } from "react";
 import { validateAddPlan } from "../../assets/validations";
-import { addPlanAssurance } from "../../assets/Apis/assets";
+import { addPlanAssurance, getPlansByPageandSearch } from "../../assets/Apis/assets";
 import AlertModal from "../../components/alertModal";
 import {
   Select,
@@ -39,10 +39,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { SearchIcon } from "lucide-react";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table"
+import {
+  Table,
+  TableHeader,
+  TableRow,
+  TableHead,
+  TableBody,
+  TableCell,
+} from "@/components/ui/table";
 import CustomLoading from "../../components/customLoading";
+import { addPlanAdmin, getAllAssurances, getPharmaciesCount, getPlans, getPlansCount } from "../../assets/Apis/admin";
 
 export default function AdminPlans() {
   const TOKEN = localStorage.getItem("token");
@@ -51,6 +59,8 @@ export default function AdminPlans() {
     const [errors, setErrors] = useState({});
     const [showDialog, setShowDialog] = useState(false);
     const [buttonDisabled, setButtonDisabled] = useState(false);
+    const [assurances,setAssurances]=useState([])
+    const [assuranceID,setAssuranceID]=useState();
     const [formData, setFormData] = useState({
       title: "",
       bio: "",
@@ -65,7 +75,7 @@ export default function AdminPlans() {
     });
 
     const hideDialog = () => setShowDialog(false);
-
+    const changeAssuranceID=(e)=>setAssuranceID(e)
     const handleChange = (e) => {
       setFormData({
         ...formData,
@@ -77,10 +87,9 @@ export default function AdminPlans() {
       e.preventDefault();
       setButtonDisabled(true);
       const validation = validateAddPlan(formData);
-      console.log(validation);
       if (Object.keys(validation).length === 0) {
-        const response = await addPlanAssurance(TOKEN, formData);
-        if (response && !response.error) {
+        const response = await addPlanAdmin(TOKEN, formData,assuranceID);
+        if (response && !response.name) {
           setShowDialog(true);
           window.location.reload();
         } else {
@@ -91,6 +100,19 @@ export default function AdminPlans() {
       }
       setButtonDisabled(false);
     };
+
+    const fetchAssurances=async()=>
+      {
+        const response=await getAllAssurances(TOKEN)
+        if (response)
+          setAssurances(response)
+      }
+
+    
+      useEffect(()=>{
+        fetchAssurances();
+      },[])
+
 
     return (
       <>
@@ -267,13 +289,13 @@ export default function AdminPlans() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="assurance">Assurance Plan Owner</Label>
-                <Select id="assurance">
+                <Select id="assurance" onValueChange={changeAssuranceID}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select an Assurance Company" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="star">Star</SelectItem>
-                    <SelectItem value="dark">Amen </SelectItem>
+                    {assurances.map((assurance,index)=><SelectItem key={index} value={assurance._id}>{assurance.name}</SelectItem>)}
+                    
                   </SelectContent>
                 </Select>
                 {errors.assurance && (
@@ -289,7 +311,7 @@ export default function AdminPlans() {
               )}
             </CardContent>
             <CardFooter>
-              <Button type="submit" className="ml-auto bg-darkblue min-w-40 ">
+              <Button type="submit" className="ml-auto bg-darkblue min-w-40 " disabled={buttonDisabled}>
                 Add Plan
               </Button>
             </CardFooter>
@@ -298,7 +320,7 @@ export default function AdminPlans() {
         <AlertModal
           open={showDialog}
           title="Plan Added!"
-          content="Your Plan has been successfully Added."
+          content="Plan has been successfully Added."
           onClick={hideDialog}
           buttonTitle="Dismiss"
         />
@@ -311,80 +333,60 @@ export default function AdminPlans() {
     const [deleteIndex, setDeleteIndex] = useState();
     const changeDeleteIndex = (index) => setDeleteIndex(index);
     const toggleShowDeleteDialog = () => setShowDeleteDialog((prev) => !prev);
-    const [plansCount, setplansCount] = useState(78);
+    const [plansCount, setplansCount] = useState();
     const [loadingCount, setLoadingCount] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
     const [search, setSearch] = useState("");
     const [errors, setErrors] = useState({});
     const br = useRef();
-    const [data, setData] = useState([
-      {
-        assuranceCompany: "Star",
-        email: "Star@gmail.com",
-        planTitle: "Safa Plan",
-      },
-      {
-        assuranceCompany: "Star",
-        email: "Star@gmail.com",
-        planTitle: "Safa Plan",
-      },
-      {
-        assuranceCompany: "Star",
-        email: "Star@gmail.com",
-        planTitle: "Safa Plan",
-      },
-      {
-        assuranceCompany: "Star",
-        email: "Star@gmail.com",
-        planTitle: "Safa Plan",
-      },
-      {
-        assuranceCompany: "Star",
-        email: "Star@gmail.com",
-        planTitle: "Safa Plan",
-      },
-      
-    ]);
+    const [data, setData] = useState()
     const handleDelete = (index) => {
       changeDeleteIndex(index);
       toggleShowDeleteDialog();
     };
 
     const handleSearchChange = (e) => setSearch(e.target.value);
+    const handlePrev = () => setCurrentPage((prev) => prev - 1);
+    const handleNext = () => setCurrentPage((prev) => prev + 1);
 
     const handleSearch = async (e) => {
-     
+      e.preventDefault();
+      const count = await getPlansSearchCount(TOKEN, currentPage, search);
+      if (count || count === 0) setplansCount(count);
+      const response = await getPla(TOKEN, currentPage, search);
+      if (response) setData(response);
+    };
+
+    const fetchPlansCount = async () => {
+      setLoadingCount(true);
+      const response = await getPlansCount(TOKEN);
+      if (response) setplansCount(response);
+      setLoadingCount(false);
+    };
+
+    const fetchPlans = async () => {
+      const response = await getPlans(TOKEN, currentPage, search);
+      if (response) setData(response);
     };
 
     useEffect(() => {
-      console.log(search);
       if (search != "") br.current.click();
+    }, [currentPage]);
+
+    useEffect(() => {
+      if (search === "") {
+        setCurrentPage(0);
+        fetchPlansCount();
+        fetchPlans();
+      }
+    }, [search]);
+
+    useEffect(() => {
+      fetchPlans();
     }, [currentPage]);
 
    
 
-    
-
-   
-
-    // useEffect(() => {
-    //   if (search === "") {
-    //     setCurrentPage(0);
-    //     fetchplansCount();
-    //     fetchEmployees();
-    //   }
-    // }, [search]);
-
-    // useEffect(() => {
-    //   fetchEmployees();
-    // }, [currentPage]);
-
-    const handlePrev = () => setCurrentPage((prev) => prev - 1);
-    const handleNext = () => setCurrentPage((prev) => prev + 1);
-
-   
-
-  
     return (
       <div>
         <header className="mx-5 py-3">
@@ -420,12 +422,12 @@ export default function AdminPlans() {
                   <p className="pl-5 text-white">Assurance Company</p>
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center">
-                  Email
+                Plan Title
                 </TableHead>
                 <TableHead className="text-white place-content-center text-center">
-                  Plan Title
+                  Sells
                 </TableHead>
-                
+
                 <TableHead className="text-white place-content-center text-center pl-[50px]">
                   Actions
                 </TableHead>
@@ -438,27 +440,27 @@ export default function AdminPlans() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <Avatar className=" h-14 w-14 text-darkblue">
-                          <AvatarImage src={plan.assurancePicture} />
+                          <AvatarImage src={plan?.assuranceLogo} />
                           <AvatarFallback className="uppercase">
-                            {plan.assuranceCompany[0]}
-                            {plan.assuranceCompany[1]}
+                            {plan.assuranceName?.[0]}
+                            {plan.assuranceName?.[1]}
                           </AvatarFallback>
                         </Avatar>
                         <div>
                           <div className="font-medium capitalize">
-                            {plan.assuranceCompany}
+                            {plan.assuranceName}
                           </div>
                         </div>
                       </div>
                     </TableCell>
 
                     <TableCell className="flex justify-center items-center w-auto">
-                      {plan.email}
+                      {plan.title}
                     </TableCell>
                     <TableCell className="flex justify-center items-center w-auto pr-12">
-                      {plan.planTitle}
+                      {plan.numberOfPurchases}
                     </TableCell>
-                    
+
                     <TableCell className="flex items-center justify-end w-auto gap-5">
                       <Button
                         size="sm"
@@ -502,8 +504,7 @@ export default function AdminPlans() {
                   </PaginationItem>
                 )}
 
-                {Math.min((currentPage + 1) * 5, plansCount) !=
-                  plansCount && (
+                {Math.min((currentPage + 1) * 5, plansCount) != plansCount && (
                   <PaginationItem onClick={handleNext}>
                     <PaginationNext />
                   </PaginationItem>
@@ -517,7 +518,8 @@ export default function AdminPlans() {
             <AlertDialogHeader>
               <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will Deactivate this plan ,it will be unavailable for companies to buy it
+                This action cannot be undone. This will Deactivate this plan ,it
+                will be unavailable for companies to buy it
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -536,7 +538,6 @@ export default function AdminPlans() {
       </div>
     );
   };
-
 
   return (
     <div className="min-h">
@@ -565,7 +566,7 @@ export default function AdminPlans() {
               <AddPlan />
             </TabsContent>
             <TabsContent value="my-plans">
-                <Plans/>    
+              <Plans />
             </TabsContent>
           </main>
         </Tabs>

@@ -96,7 +96,7 @@ export function areDatesWithinXMinutes(date1, date2,minutes) {
     return /^[1-9]\d*$/.test(str);
   }
 
-  export    const isValidPrice = (price) => {
+  export const isValidPrice = (price) => {
     // Regular expression to match non-negative floats
     const regex = /^(?!0)\d+(\.\d*)?$/;
     return regex.test(price);
