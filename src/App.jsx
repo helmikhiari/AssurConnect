@@ -53,11 +53,12 @@ export default function App() {
       console.log("here");
       window.location.replace("/serverDown");
     }
+    
   };
   const { loadMe, setActiveProfile, activeProfile } = useContext(userContext);
   useEffect(() => {
     const fetchData = async () => {
-      // await healthCheck()
+   
       const token = localStorage.getItem("token");
       if (token) {
         const response = await loadMe(token);

@@ -52,6 +52,7 @@ export default function Settings() {
 
     const onSubmit = async (e) => {
       e.preventDefault();
+      const TOKEN=localStorage.getItem('token')
       const validation = validateChangePassword(
         formData.current.oldPassword,
         formData.current.newPassword,
@@ -61,10 +62,12 @@ export default function Settings() {
       if (Object.keys(validation).length === 0) {
         const response = await changePassword(
           formData.current.oldPassword,
-          formData.current.newPassword
+          formData.current.newPassword,
+          TOKEN
         );
-        console.log(response.data);
-        if (!response.data) {
+        console.log(response);
+        
+        if (response.oldPassword || response.newPassword || response.error) {
           setErrors(response);
         } else {
           setPasswordChanged(true);

@@ -633,6 +633,22 @@ export default function Signup() {
             </div>
 
             <div className="space-y-2">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea
+                id="bio"
+                placeholder="Your company in 3 words"
+                name="bio"
+                onChange={handleChange}
+                defaultValue={formData.current.bio}
+              />
+              {errors.bio && (
+                <span className="text-red-500 flex justify-start text-sm ">
+                  {errors.bio}
+                </span>
+              )}
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"

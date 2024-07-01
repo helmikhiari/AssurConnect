@@ -279,10 +279,10 @@ export default function Appointments() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className=" h-14 w-14 text-darkblue">
-                        <AvatarImage src={app.patientPicture} />
+                        <AvatarImage src={app?.patientPicture} />
                         <AvatarFallback className="uppercase">
-                          {app.patientFirstName[0]}
-                          {app.patientLastName[0]}
+                          {app.patientFirstName?.[0]}
+                          {app.patientLastName?.[0]}
                         </AvatarFallback>
                       </Avatar>
                       <div>

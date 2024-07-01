@@ -8,7 +8,7 @@ export async function health()
 {
     const response=await Get(API_BASE+'/health');
     if (response?.status===200)
-        {
+        {   
             return response.data;
         }
     else
@@ -55,7 +55,8 @@ export async function signUp(data,accountType)
                 "email":data.email,
                 "password":data.password,
                 "description":data.description,
-                "taxNumber":data.taxNumber
+                "taxNumber":data.taxNumber,
+                "bio":data.bio
             }
             break;
     }
@@ -136,23 +137,18 @@ export async function loadCurrentUser(token,role) {
 
 }
 
-export async function changePassword(oldPassword,newPassword)
-{   const token=localStorage.getItem('token')
-    if (!token)
-    {
-        return null;
-    }
-    else{
+export async function changePassword(oldPassword,newPassword,token)
+{       
     const response=await Patch(API_BASE+"/auth/changePassword",{oldPassword,newPassword},token);
     if (response.status===200)
         return response.data
     else if (response.status===403)
-        return {"oldPassword":"Invalid Current Password"};
+        return {oldPassword:"Invalid Current Password"};
     else if (response.status===400)
-        return {"newPassword":"New Password must be different from Current Password"};
+        return {newPassword:"New Password must be different from Current Password"};
     else
-        return {"error":"Error occured,Try refreshing the page"};
-    }
+        return {error:"Error occured,Try refreshing the page"};
+    
 }
 
 export async function sendOtpForgetPassword(email)
@@ -219,12 +215,14 @@ export async function updateCompany(data,token,role)
 export async function getNextApppointment(token)
 {
     const response=await Get(API_BASE+'/doctor/getNextApp',token)
+  
     if (response.status===200)
     {   
         if (response.data!=false)
         {
         response.data.nextApp.date=correctDate(response.data.nextApp.date);
-        response.data.prevApp.date=stringToDateBar(response.data.prevApp.date);
+        if (response.data.prevApp?.date!=null)
+            response.data.prevApp.date=stringToDateBar(response.data.prevApp?.date);
         }
         return response.data;
     }
@@ -343,9 +341,9 @@ export async function makeApp(token,appId,otp,notes,medicines)
         {
             return true;
         }
-    else if (response.status===400)
+    else if (response.status==400)
         {
-            return false;
+            return false;   
         }
     else
     {

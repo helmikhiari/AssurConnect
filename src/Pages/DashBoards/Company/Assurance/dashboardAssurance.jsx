@@ -57,19 +57,19 @@ function AssuranceDashboard() {
   return (
     <div>
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        <DashboardCard title="Total Plans" number="11">
+        <DashboardCard title="Total Plans" number="3">
           <ClipboardIcon className="w-6 h-6" />
         </DashboardCard>
         <DashboardCard
           title="Total Actif Plans"
           subNumber="+5.2% from last month"
-          number={"24"}
+          number={"9"}
         >
           <FileIcon className="w-6 h-6" />
         </DashboardCard>
         <DashboardCard
           title="Claims Processed"
-          number="620"
+          number="180"
           subNumber="+8% this month"
         >
           <ClipboardIcon className="w-6 h-6" />

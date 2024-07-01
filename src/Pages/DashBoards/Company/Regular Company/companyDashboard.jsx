@@ -108,8 +108,9 @@ const dataBars = [
       </div>
       <div className="space-y-4">
 
-      <Card className="overflow-x-auto min-w-96  shadow-sm hover:shadow-lg transition-all duration-500">
+      <Card className="overflow-x-auto min-w-96 mt-5 shadow-sm hover:shadow-lg transition-all duration-500">
         <BarChart
+        className="pl-[500px]"
   xAxis={[{ scaleType: 'band', data: ['Premuim Plan', 'Safa Plus Plan', 'Tounsi Elite Plan'] }]}
   series={[
     { dataKey: 'expenses', label: 'Expenses',color:"#FF5733 " },

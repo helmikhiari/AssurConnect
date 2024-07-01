@@ -28,7 +28,7 @@ export default function RefundRequests() {
   const onTabChange = (value) => setActiveTab(value);
   const [loadingCount, setLoadingCount] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [refundsCount, setRefundsCount] = useState(18);
+  const [refundsCount, setRefundsCount] = useState(180);
   const handlePrev = () => setCurrentPage((prev) => prev - 1);
   const handleNext = () => setCurrentPage((prev) => prev + 1);
   const Status = ({status})=>
@@ -99,7 +99,7 @@ export default function RefundRequests() {
                 <TableRow className="bg-gray-300  ">
                   <TableHead>Plan</TableHead>
                   <TableHead>Requested By</TableHead>
-                  <TableHead>Amount</TableHead>
+                  <TableHead>Max Refund Amount</TableHead>
 
                   <TableHead>Ceiling</TableHead>
                   <TableHead>Requested On</TableHead>

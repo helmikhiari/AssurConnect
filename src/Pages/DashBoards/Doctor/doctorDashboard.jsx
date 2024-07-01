@@ -202,9 +202,9 @@ export default function DoctorDashboard() {
                   {nextAppWindowInfo?.nextApp.patientLastName}
                 </div>
               </div>
-              <div className="mt-4 py-2 px-1 rounded-lg shadow-md flex  flex-col">
+              {nextAppWindowInfo?.prevApp?<div className="mt-4 py-2 px-1 rounded-lg shadow-md flex  flex-col">
                 <p className="text-[14px] font-medium text-left text-black">
-                  Last Appointment: {nextAppWindowInfo?.prevApp.date}
+                  Last Appointment: {nextAppWindowInfo?.prevApp?.date}
                 </p>
                 <div className="flex flex-row gap-3 pt-3">
                   <p className="text-[13px] font-medium text-left text-black">
@@ -228,13 +228,14 @@ export default function DoctorDashboard() {
                   Notes
                 </p>
                 <p className="text-left text-sm">
-                  {nextAppWindowInfo?.prevApp.details
-                    ? nextAppWindowInfo?.prevApp.details
+                  {nextAppWindowInfo?.prevApp?.details
+                    ? nextAppWindowInfo?.prevApp?.details
                     : "No details available for the last appointment."}
                 </p>
                 {/* function splitText into phrases  */}
-              </div>
-              <Button
+              </div>:
+              <p className="rounded text-lg font-bold text-red-500 text-center w-full mt-4 mb-4 items-center">New Patient</p>}
+              <Button 
                 className="ml-auto shadow hover:drop-shadow mt-5"
                 variant="primary"
                 onClick={() => startApp(nextAppWindowInfo?.nextApp)}
@@ -308,12 +309,12 @@ export default function DoctorDashboard() {
           <DashboardCard
             title="Upcoming Appointments"
             // number={`+${nextWeekAppsNumber}`}
-            number={'+24  '}
+            number={"+24  "}
             subNumber="in the next 7 days"
           >
             <CalendarIcon className="w-4 h-4 text-darkblue" />
           </DashboardCard>
-          
+
           <DashboardCard
             title="Completed Appointments"
             number="170"

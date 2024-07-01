@@ -356,7 +356,7 @@ export default function ManagePlan() {
         </div>
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Recent Claims</h2>
-          <Claims />
+          {/* <Claims /> */}
         </div>
       </div>
       <div className="bg-gray-700 rounded-lg p-6 md:p-8 text-white">
